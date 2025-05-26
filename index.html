@@ -1,0 +1,4064 @@
+<!doctype html>
+<html lang="fa" dir="rtl"> 
+ <head> 
+  <meta charset="UTF-8"> 
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+  <title>مدیریت مالی شخصی ESN </title> 
+  <link rel="manifest" href="manifest.json"> 
+  <meta name="theme-color" content="#4F46E5"> 
+  <link rel="apple-touch-icon" href="icon-192x192.png"> 
+  <meta name="apple-mobile-web-app-capable" content="yes"> 
+  <meta name="apple-mobile-web-app-status-bar-style" content="black"> 
+  <meta name="apple-mobile-web-app-title" content="مدیریت مالی"> 
+  <script src="https://cdn.tailwindcss.com"></script> 
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> 
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script> 
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script> 
+  <script src="https://cdn.jsdelivr.net/npm/marked@5.1.0/marked.min.js"></script> 
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet"> 
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            primary: {
+              50: '#eef2ff',
+              100: '#e0e7ff',
+              200: '#c7d2fe',
+              300: '#a5b4fc',
+              400: '#818cf8',
+              500: '#6366f1',
+              600: '#4f46e5',
+              700: '#4338ca',
+              800: '#3730a3',
+              900: '#312e81',
+              950: '#1e1b4b',
+            },
+            success: {
+              50: '#f0fdf4',
+              500: '#22c55e',
+              600: '#16a34a',
+              700: '#15803d',
+            },
+            danger: {
+              50: '#fef2f2',
+              500: '#ef4444',
+              600: '#dc2626',
+              700: '#b91c1c',
+            },
+            warning: {
+              50: '#fffbeb',
+              500: '#f59e0b',
+              600: '#d97706',
+              700: '#b45309',
+            },
+            info: {
+              50: '#eff6ff',
+              500: '#3b82f6',
+              600: '#2563eb',
+              700: '#1d4ed8',
+            }
+          },
+          fontFamily: {
+            'vazir': ['Vazirmatn', 'sans-serif']
+          },
+          animation: {
+            'spin-slow': 'spin 3s linear infinite',
+            'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+            'bounce-slow': 'bounce 2s infinite',
+            'fade-in': 'fadeIn 0.5s ease-in-out',
+            'slide-up': 'slideUp 0.3s ease-out',
+            'slide-down': 'slideDown 0.3s ease-out',
+            'scale-in': 'scaleIn 0.2s ease-out',
+            'slide-in-right': 'slideInRight 0.3s ease-out',
+            'slide-out-left': 'slideOutLeft 0.3s ease-out',
+            'float': 'float 6s ease-in-out infinite',
+          },
+          keyframes: {
+            fadeIn: {
+              '0%': { opacity: '0' },
+              '100%': { opacity: '1' },
+            },
+            slideUp: {
+              '0%': { transform: 'translateY(10px)', opacity: '0' },
+              '100%': { transform: 'translateY(0)', opacity: '1' },
+            },
+            slideDown: {
+              '0%': { transform: 'translateY(-10px)', opacity: '0' },
+              '100%': { transform: 'translateY(0)', opacity: '1' },
+            },
+            scaleIn: {
+              '0%': { transform: 'scale(0.9)', opacity: '0' },
+              '100%': { transform: 'scale(1)', opacity: '1' },
+            },
+            slideInRight: {
+              '0%': { transform: 'translateX(100%)', opacity: '0' },
+              '100%': { transform: 'translateX(0)', opacity: '1' },
+            },
+            slideOutLeft: {
+              '0%': { transform: 'translateX(0)', opacity: '1' },
+              '100%': { transform: 'translateX(-100%)', opacity: '0' },
+            },
+            float: {
+              '0%': { transform: 'translate(0, 0px)' },
+              '50%': { transform: 'translate(0, -8px)' },
+              '100%': { transform: 'translate(0, 0px)' }
+            },
+          }
+        }
+      }
+    }
+  </script> 
+  <style>
+    @import url('https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css');
+    
+    * {
+      font-family: 'Vazirmatn', 'Tahoma', sans-serif;
+      transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    
+    body {
+      transition: background-color 0.3s ease;
+      min-height: 100vh;
+      overflow-x: hidden;
+      scroll-behavior: smooth;
+    }
+    
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    
+    ::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 10px;
+    }
+    
+    .dark ::-webkit-scrollbar-track {
+      background: #1f2937;
+    }
+    
+    ::-webkit-scrollbar-thumb {
+      background: #6366f1;
+      border-radius: 10px;
+    }
+    
+    ::-webkit-scrollbar-thumb:hover {
+      background: #4f46e5;
+    }
+    
+    /* Page transitions */
+    .page {
+      position: absolute;
+      width: 100%;
+      min-height: calc(100% - 80px);
+      transition: transform 0.5s ease, opacity 0.5s ease;
+      padding-bottom: 80px;
+    }
+
+    .page-enter {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+
+    .page-active {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .page-exit {
+      opacity: 0;
+      transform: translateY(-20px);
+      pointer-events: none;
+    }
+    
+    /* Glass effect */
+    .glass {
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    
+    .dark .glass {
+      background: rgba(17, 24, 39, 0.8);
+      border: 1px solid rgba(55, 65, 81, 0.3);
+    }
+    
+    /* Receipt styles */
+    .receipt {
+      background-color: white;
+      color: black;
+      border-radius: 16px;
+      padding: 24px;
+      width: 100%;
+      max-width: 400px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      font-family: 'Vazirmatn', sans-serif;
+    }
+    
+    .receipt-header {
+      text-align: center;
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+      border-bottom: 2px dashed #e2e8f0;
+    }
+    
+    .receipt-title {
+      font-size: 24px;
+      font-weight: bold;
+      color: #4F46E5;
+      margin-bottom: 5px;
+    }
+    
+    .receipt-subtitle {
+      font-size: 14px;
+      color: #6b7280;
+    }
+    
+    .receipt-body {
+      padding: 15px 0;
+    }
+    
+    .receipt-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid #f3f4f6;
+    }
+    
+    .receipt-label {
+      font-weight: 500;
+      color: #6b7280;
+    }
+    
+    .receipt-value {
+      font-weight: 600;
+      text-align: left;
+    }
+    
+    .receipt-highlight {
+      font-size: 18px;
+      font-weight: bold;
+      color: #4F46E5;
+    }
+    
+    .receipt-footer {
+      text-align: center;
+      font-size: 12px;
+      margin-top: 20px;
+      padding-top: 15px;
+      border-top: 2px dashed #e2e8f0;
+      color: #6b7280;
+    }
+    
+    /* Toast notification */
+    .toast {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 12px 24px;
+      border-radius: 12px;
+      z-index: 100;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+      opacity: 0;
+      transition: opacity 0.3s, transform 0.3s;
+    }
+    
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+    
+    .toast.toast-success {
+      background-color: #10b981;
+      color: white;
+    }
+    
+    .toast.toast-error {
+      background-color: #ef4444;
+      color: white;
+    }
+    
+    .toast.toast-info {
+      background-color: #3b82f6;
+      color: white;
+    }
+    
+    .toast.toast-warning {
+      background-color: #f59e0b;
+      color: white;
+    }
+
+    /* Mobile bottom navigation */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background-color: #ffffff;
+      box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.08);
+      border-radius: 20px 20px 0 0;
+      z-index: 40;
+      padding-bottom: env(safe-area-inset-bottom, 12px);
+    }
+    
+    .dark .bottom-nav {
+      background-color: #1f2937;
+      box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.3);
+    }
+    
+    .nav-item {
+      position: relative;
+      padding: 12px 4px;
+      border-radius: 12px;
+      transition: all 0.3s;
+    }
+    
+    .nav-item.active {
+      transform: translateY(-12px);
+    }
+    
+    .nav-item .nav-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      margin: 0 auto;
+      font-size: 22px;
+      transition: all 0.3s;
+      background-color: #f3f4f6;
+      color: #6b7280;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+    }
+    
+    .dark .nav-icon {
+      background-color: #374151;
+      color: #9ca3af;
+    }
+    
+    .nav-item.active .nav-icon {
+      background-color: #4F46E5;
+      color: white;
+      box-shadow: 0 10px 20px rgba(79, 70, 229, 0.3);
+    }
+    
+    .add-button {
+      transform: translateY(-25px);
+      box-shadow: 0 10px 20px rgba(79, 70, 229, 0.3);
+    }
+    
+    .add-button .nav-icon {
+      width: 60px;
+      height: 60px;
+      font-size: 28px;
+      background-color: #4F46E5;
+      color: white;
+      box-shadow: 0 10px 20px rgba(79, 70, 229, 0.3);
+    }
+    
+    /* Weekly calendar styles */
+    .week-day {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 50px;
+      padding: 10px 0;
+      border-radius: 12px;
+      transition: all 0.3s;
+    }
+    
+    .week-day.active {
+      background-color: #4F46E5;
+      color: white;
+      transform: scale(1.1);
+      box-shadow: 0 8px 20px rgba(79, 70, 229, 0.25);
+    }
+    
+    /* Animated balance card */
+    .balance-card {
+      background: linear-gradient(135deg, #4F46E5, #818CF8);
+      box-shadow: 0 20px 40px rgba(79, 70, 229, 0.2);
+      border-radius: 20px;
+      padding: 20px;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .balance-card::before {
+      content: '';
+      position: absolute;
+      width: 200px;
+      height: 200px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 50%;
+      top: -100px;
+      right: -100px;
+    }
+    
+    .balance-card::after {
+      content: '';
+      position: absolute;
+      width: 150px;
+      height: 150px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 50%;
+      bottom: -70px;
+      left: -70px;
+    }
+    
+    /* Reminder slider */
+    .reminder-slide {
+      background: linear-gradient(to right, #f9fafb, #f3f4f6);
+      border-radius: 16px;
+      padding: 16px;
+      margin-right: 8px;
+      min-width: 280px;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.05);
+      border-right: 4px solid;
+    }
+    
+    .dark .reminder-slide {
+      background: linear-gradient(to right, #1f2937, #374151);
+    }
+    
+    .reminder-urgent {
+      border-right-color: #ef4444;
+    }
+    
+    .reminder-soon {
+      border-right-color: #f59e0b;
+    }
+    
+    .reminder-upcoming {
+      border-right-color: #3b82f6;
+    }
+    
+    /* User profile styles */
+    .profile-pic {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      overflow: hidden;
+      border: 2px solid white;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-size: cover;
+      background-position: center;
+    }
+    
+    /* Transaction card styles */
+    .transaction-card {
+      border-radius: 16px;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.05);
+      transition: all 0.3s;
+    }
+    
+    .transaction-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+    }
+    
+    /* Add menu styles */
+    .add-menu {
+      position: fixed;
+      bottom: 80px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: white;
+      border-radius: 16px;
+      padding: 10px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+      z-index: 39;
+      transition: all 0.3s;
+      width: 200px;
+    }
+    
+    .dark .add-menu {
+      background-color: #1f2937;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+    
+    .add-menu.hidden {
+      opacity: 0;
+      transform: translateX(-50%) translateY(20px);
+      pointer-events: none;
+    }
+    
+    .add-menu-item {
+      padding: 12px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      transition: all 0.2s;
+    }
+    
+    .add-menu-item:hover {
+      background-color: #f3f4f6;
+    }
+    
+    .dark .add-menu-item:hover {
+      background-color: #374151;
+    }
+    
+    /* 3D button effect */
+    .btn-3d {
+      border-bottom: 4px solid rgba(0, 0, 0, 0.2);
+      transition: all 0.1s;
+    }
+    
+    .btn-3d:active {
+      transform: translateY(2px);
+      border-bottom-width: 2px;
+    }
+    
+    /* Contact avatar */
+    .contact-avatar {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      font-weight: bold;
+      text-transform: uppercase;
+      color: white;
+      width: 40px;
+      height: 40px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    
+    /* Timeline */
+    .timeline {
+      position: relative;
+    }
+    
+    .timeline::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background-color: #e5e7eb;
+      left: 19px;
+    }
+    
+    .dark .timeline::before {
+      background-color: #374151;
+    }
+    
+    .timeline-item {
+      position: relative;
+      padding-left: 50px;
+      margin-bottom: 20px;
+    }
+    
+    .timeline-dot {
+      position: absolute;
+      left: 15px;
+      top: 0;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background-color: #4F46E5;
+      z-index: 1;
+    }
+    
+    /* Animations for balance card circles */
+    @keyframes float-slow {
+      0% { transform: translate(0, 0); }
+      50% { transform: translate(-10px, -10px); }
+      100% { transform: translate(0, 0); }
+    }
+    
+    @keyframes float-slower {
+      0% { transform: translate(0, 0); }
+      50% { transform: translate(10px, -5px); }
+      100% { transform: translate(0, 0); }
+    }
+    
+    .balance-bubble-1 {
+      animation: float-slow 8s ease-in-out infinite;
+    }
+    
+    .balance-bubble-2 {
+      animation: float-slower 12s ease-in-out infinite;
+    }
+  </style> 
+ <style type="text/css" id="dcoder_stylesheet">body {
+    font-family: Arial, sans-serif;
+    direction: rtl;
+    text-align: right;
+}
+
+.card {
+    border: 2px solid #007bff;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+
+---</style></head> 
+ <body class="bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-200"> <!-- Toast notification --> 
+  <div id="toast" class="toast flex items-center"> <i class="ri-check-line mr-2 text-xl"></i> <span class="toast-message"></span> 
+  </div> <!-- Main App Container --> 
+  <div id="app-container" class="relative"> <!-- Home Page --> 
+   <div id="home-page" class="page page-active"> 
+    <div class="container max-w-6xl mx-auto px-4 py-4 pb-24"> <!-- Header with Profile --> 
+     <div class="flex justify-between items-center mb-6"> 
+      <div class="flex items-center"> 
+       <div class="mr-3 bg-primary-50 dark:bg-primary-900 p-2 rounded-xl"> <i class="ri-wallet-3-line text-primary-600 dark:text-primary-400 text-2xl"></i> 
+       </div> 
+       <h1 class="text-xl font-bold">مدیریت مالی شخصی</h1> 
+      </div> 
+      <div class="flex items-center"> 
+       <div id="profilePicContainer" class="profile-pic bg-primary-600 flex items-center justify-center text-white"> <span id="profileInitial" class="text-lg font-bold">ک</span> 
+       </div> 
+       <div class="mr-3 text-right hidden sm:block"> 
+        <div id="profileName" class="font-bold">
+         کاربر جدید
+        </div> 
+        <div id="profileRole" class="text-xs text-gray-500 dark:text-gray-400">
+         کاربر عادی
+        </div> 
+       </div> 
+      </div> 
+     </div> <!-- Weekly Calendar --> 
+     <div class="bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-sm mb-6"> 
+      <h2 class="text-lg font-bold mb-3 flex items-center"> <i class="ri-calendar-line ml-2 text-primary-600"></i> <span>تقویم هفتگی</span> </h2> 
+      <div id="weeklyCalendar" class="flex justify-between overflow-x-auto pb-2"> 
+        <!-- Weekly calendar will be dynamically generated here --> 
+      </div> 
+     </div> <!-- Reminders Slider --> 
+     <div class="mb-6"> 
+      <h2 class="text-lg font-bold mb-3 flex items-center"> <i class="ri-alarm-warning-line ml-2 text-primary-600"></i> <span>یادآوری‌های مهم</span> </h2> 
+      <div class="reminders-container overflow-x-auto"> 
+       <div class="flex pb-2" id="reminderSlider"> 
+        <!-- Reminders will be populated from transactions data --> 
+       </div> 
+      </div> 
+     </div> <!-- Balance Card --> 
+     <div class="balance-card mb-6 text-white"> 
+      <div class="balance-bubble-1 absolute w-32 h-32 rounded-full bg-white bg-opacity-10"></div> 
+      <div class="balance-bubble-2 absolute w-24 h-24 rounded-full bg-white bg-opacity-10"></div> 
+      <div class="relative z-10"> 
+       <div class="text-white text-opacity-80 mb-2">
+        موجودی حساب
+       </div> 
+       <div id="totalBalanceHome" class="text-3xl font-bold mb-4">
+        ۰ تومان
+       </div> 
+       <div class="flex justify-between text-sm text-white text-opacity-80"> 
+        <div class="flex flex-col items-center"> <span>درآمد ماه</span> <span id="monthlyIncomeHome" class="font-bold mt-1">۰ تومان</span> 
+        </div> 
+        <div class="flex flex-col items-center"> <span>هزینه ماه</span> <span id="monthlyExpenseHome" class="font-bold mt-1">۰ تومان</span> 
+        </div> 
+       </div> 
+      </div> 
+     </div> <!-- Recent Transactions --> 
+     <div class="bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-sm mb-6"> 
+      <div class="flex justify-between items-center mb-4"> 
+       <h2 class="text-lg font-bold flex items-center"> <i class="ri-history-line ml-2 text-primary-600"></i> <span>تراکنش‌های اخیر</span> </h2> <a href="#" id="viewAllTransactions" class="text-primary-600 text-sm flex items-center"> <span>همه</span> <i class="ri-arrow-left-line mr-1"></i> </a> 
+      </div> 
+      <div id="recentTransactions"> 
+       <!-- Recent transactions will be populated from stored data --> 
+      </div> 
+     </div> <!-- Balances Overview --> 
+     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6"> 
+      <div class="bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-sm"> 
+       <h2 class="text-lg font-bold mb-3 flex items-center"> <i class="ri-user-received-line ml-2 text-success-600"></i> <span>طلب از دیگران</span> </h2> 
+       <div id="totalReceivableHome" class="text-2xl font-bold text-success-600 mb-2">
+        ۰ تومان
+       </div> 
+       <div id="receivableCountHome" class="text-sm text-gray-500 dark:text-gray-400">
+        از ۰ نفر
+       </div> 
+      </div> 
+      <div class="bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-sm"> 
+       <h2 class="text-lg font-bold mb-3 flex items-center"> <i class="ri-user-shared-line ml-2 text-danger-600"></i> <span>بدهی به دیگران</span> </h2> 
+       <div id="totalPayableHome" class="text-2xl font-bold text-danger-600 mb-2">
+        ۰ تومان
+       </div> 
+       <div id="payableCountHome" class="text-sm text-gray-500 dark:text-gray-400">
+        به ۰ نفر
+       </div> 
+      </div> 
+     </div> <!-- Charts Overview --> 
+     <div class="bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-sm"> 
+      <h2 class="text-lg font-bold mb-3 flex items-center"> <i class="ri-pie-chart-line ml-2 text-primary-600"></i> <span>نمودار هزینه‌ها</span> </h2> 
+      <div class="h-64"> 
+       <canvas id="categoryChart"></canvas> 
+      </div> 
+     </div> 
+    </div> 
+   </div> <!-- Transactions Page --> 
+   <div id="transactions-page" class="page page-exit"> 
+    <div class="container max-w-6xl mx-auto px-4 py-4 pb-24"> 
+     <div class="flex justify-between items-center mb-6"> 
+      <div> 
+       <h1 class="text-xl font-bold">تراکنش‌ها</h1> 
+       <p class="text-sm text-gray-500 dark:text-gray-400">مدیریت تراکنش‌های مالی شخصی</p> 
+      </div> 
+      <div class="flex items-center"> 
+       <div class="search-container ml-2 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center px-3 py-2"> 
+        <input type="text" id="filterText" placeholder="جستجو..." class="bg-transparent border-none outline-none w-36 sm:w-auto"> <i class="ri-search-line text-gray-500"></i> 
+       </div> <button id="filterButton" class="p-2 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"> <i class="ri-filter-3-line text-xl"></i> </button> 
+      </div> 
+     </div> <!-- Balance Summary --> 
+     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6"> 
+      <div class="bg-white dark:bg-gray-800 p-5 rounded-2xl shadow-sm"> 
+       <div class="flex items-center mb-2 text-gray-500 dark:text-gray-400"> <i class="ri-wallet-3-line ml-2"></i> <span class="text-sm">موجودی کل</span> 
+       </div> 
+       <div id="totalBalance" class="text-2xl font-bold">
+        ۰ تومان
+       </div> 
+      </div> 
+      <div class="bg-white dark:bg-gray-800 p-5 rounded-2xl shadow-sm"> 
+       <div class="flex items-center mb-2 text-gray-500 dark:text-gray-400"> <i class="ri-arrow-left-down-line ml-2"></i> <span class="text-sm">درآمد ماه</span> 
+       </div> 
+       <div id="monthlyIncome" class="text-2xl font-bold text-success-500">
+        ۰ تومان
+       </div> 
+      </div> 
+      <div class="bg-white dark:bg-gray-800 p-5 rounded-2xl shadow-sm"> 
+       <div class="flex items-center mb-2 text-gray-500 dark:text-gray-400"> <i class="ri-arrow-right-up-line ml-2"></i> <span class="text-sm">هزینه ماه</span> 
+       </div> 
+       <div id="monthlyExpense" class="text-2xl font-bold text-danger-500">
+        ۰ تومان
+       </div> 
+      </div> 
+     </div> <!-- Filter Panel --> 
+     <div id="filterPanel" class="bg-white dark:bg-gray-800 p-5 rounded-2xl shadow-sm mb-6 hidden animate-slide-down"> 
+      <h3 class="text-lg font-bold mb-4 flex items-center"> <i class="ri-filter-line ml-2 text-primary-600"></i> فیلتر تراکنش‌ها </h3> 
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4"> 
+       <div> <label for="filterCategory" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">دسته‌بندی</label> <select id="filterCategory" class="w-full px-3 py-2 bg-gray-100 dark:bg-gray-700 border-none rounded-xl text-base focus:outline-none focus:ring-2 focus:ring-primary-500"> <option value="all">همه</option> <option value="personal">شخصی</option> <option value="work">کاری</option> <option value="food">خوراک</option> <option value="transport">حمل و نقل</option> <option value="bills">قبوض</option> <option value="entertainment">تفریح</option> <option value="other">سایر</option> </select> 
+       </div> 
+       <div> <label for="filterType" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">نوع تراکنش</label> <select id="filterType" class="w-full px-3 py-2 bg-gray-100 dark:bg-gray-700 border-none rounded-xl text-base focus:outline-none focus:ring-2 focus:ring-primary-500"> <option value="all">همه</option> <option value="income">درآمد</option> <option value="expense">هزینه</option> </select> 
+       </div> 
+       <div> <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">تاریخ</label> 
+        <div class="flex space-x-2 space-x-reverse"> 
+         <input type="date" id="filterStartDate" class="flex-1 px-3 py-2 bg-gray-100 dark:bg-gray-700 border-none rounded-xl text-base focus:outline-none focus:ring-2 focus:ring-primary-500"> <span class="flex items-center text-gray-500">تا</span> 
+         <input type="date" id="filterEndDate" class="flex-1 px-3 py-2 bg-gray-100 dark:bg-gray-700 border-none rounded-xl text-base focus:outline-none focus:ring-2 focus:ring-primary-500"> 
+        </div> 
+       </div> 
+      </div> 
+      <div class="flex justify-end mt-4"> <button id="resetFilters" class="flex items-center bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 py-2 px-4 rounded-xl transition-all duration-300"> <i class="ri-refresh-line ml-2"></i> حذف فیلترها </button> <button id="applyFilters" class="flex items-center bg-primary-600 hover:bg-primary-700 text-white py-2 px-4 mr-2 rounded-xl transition-all duration-300"> <i class="ri-filter-line ml-2"></i> اعمال فیلتر </button> 
+      </div> 
+     </div> <!-- Transactions List --> 
+     <div> 
+      <div class="flex justify-between items-center mb-4"> 
+       <h2 class="text-lg font-bold flex items-center"> <i class="ri-exchange-funds-line ml-2 text-primary-600"></i> <span>لیست تراکنش‌ها</span> </h2> 
+       <div class="flex items-center text-sm"> <span id="transactionCount" class="ml-2 bg-primary-100 text-primary-700 dark:bg-primary-900 dark:text-primary-300 text-xs font-semibold px-2 py-1 rounded-full">۰ تراکنش</span> <button id="sortTransactions" class="flex items-center text-primary-600 hover:text-primary-700 ml-2"> <i class="ri-sort-asc text-lg ml-1"></i> <span>مرتب‌سازی</span> </button> 
+       </div> 
+      </div> 
+      <div id="transactionList" class="space-y-3 animate-slide-up"> 
+       <!-- Transaction list will be dynamically populated here --> 
+      </div> 
+      <div id="emptyTransactionMessage" class="bg-white dark:bg-gray-800 rounded-2xl p-6 text-center animate-scale-in"> 
+       <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-100 dark:bg-gray-700 mb-4"> <i class="ri-inbox-line text-3xl text-gray-400 dark:text-gray-500"></i> 
+       </div> 
+       <h3 class="text-lg font-medium text-gray-600 dark:text-gray-300 mb-2">هیچ تراکنشی یافت نشد</h3> 
+       <p class="text-gray-500 dark:text-gray-400 text-sm mb-4">برای افزودن تراکنش جدید روی دکمه + کلیک کنید</p> 
+      </div> 
+     </div> 
+    </div> 
+   </div> <!-- Contacts Page --> 
+   <div id="contacts-page" class="page page-exit"> 
+    <div class="container max-w-6xl mx-auto px-4 py-4 pb-24"> 
+     <div class="flex justify-between items-center mb-6"> 
+      <div> 
+       <h1 class="text-xl font-bold">حساب با دیگران</h1> 
+       <p class="text-sm text-gray-500 dark:text-gray-400">مدیریت بدهی‌ها و طلب‌ها</p> 
+      </div> 
+      <div class="flex items-center"> 
+       <div class="search-container ml-2 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center px-3 py-2"> 
+        <input type="text" id="searchContact" placeholder="جستجو..." class="bg-transparent border-none outline-none w-36 sm:w-auto"> <i class="ri-search-line text-gray-500"></i> 
+       </div> <button id="contactsFilterButton" class="p-2 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"> <i class="ri-filter-3-line text-xl"></i> </button> 
+      </div> 
+     </div> <!-- Balance Summary --> 
+     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6"> 
+      <div class="bg-white dark:bg-gray-800 p-5 rounded-2xl shadow-sm"> 
+       <div class="flex items-center mb-2 text-gray-500 dark:text-gray-400"> <i class="ri-user-received-line ml-2"></i> <span class="text-sm">طلب من از دیگران</span> 
+       </div> 
+       <div id="totalReceivable" class="text-2xl font-bold text-success-500">
+        ۰ تومان
+       </div> 
+      </div> 
+      <div class="bg-white dark:bg-gray-800 p-5 rounded-2xl shadow-sm"> 
+       <div class="flex items-center mb-2 text-gray-500 dark:text-gray-400"> <i class="ri-user-shared-line ml-2"></i> <span class="text-sm">بدهی من به دیگران</span> 
+       </div> 
+       <div id="totalPayable" class="text-2xl font-bold text-danger-500">
+        ۰ تومان
+       </div> 
+      </div> 
+      <div class="bg-white dark:bg-gray-800 p-5 rounded-2xl shadow-sm"> 
+       <div class="flex items-center mb-2 text-gray-500 dark:text-gray-400"> <i class="ri-scales-3-line ml-2"></i> <span class="text-sm">وضعیت کلی</span> 
+       </div> 
+       <div id="netBalance" class="text-2xl font-bold text-success-500">
+        ۰ تومان
+       </div> 
+      </div> 
+     </div> <!-- Contacts Filter Panel --> 
+     <div id="contactsFilterPanel" class="bg-white dark:bg-gray-800 p-5 rounded-2xl shadow-sm mb-6 hidden animate-slide-down"> 
+      <h3 class="text-lg font-bold mb-4 flex items-center"> <i class="ri-filter-line ml-2 text-primary-600"></i> فیلتر طرف‌های حساب </h3> 
+      <div> <label for="filterContactBalance" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">وضعیت حساب</label> <select id="filterContactBalance" class="w-full px-3 py-2 bg-gray-100 dark:bg-gray-700 border-none rounded-xl text-base focus:outline-none focus:ring-2 focus:ring-primary-500"> <option value="all">همه</option> <option value="receivable">طلب من از آن‌ها</option> <option value="payable">بدهی من به آن‌ها</option> <option value="deposit">امانت دریافتی</option> <option value="loan">قرض‌الحسنه</option> <option value="settled">تسویه شده</option> </select> 
+      </div> 
+      <div class="flex justify-end mt-4"> <button id="resetContactFilters" class="flex items-center bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 py-2 px-4 rounded-xl transition-all duration-300"> <i class="ri-refresh-line ml-2"></i> حذف فیلترها </button> <button id="applyContactFilters" class="flex items-center bg-primary-600 hover:bg-primary-700 text-white py-2 px-4 mr-2 rounded-xl transition-all duration-300"> <i class="ri-filter-line ml-2"></i> اعمال فیلتر </button> 
+      </div> 
+     </div> <!-- Contacts List --> 
+     <div> 
+      <div class="flex justify-between items-center mb-4"> 
+       <h2 class="text-lg font-bold flex items-center"> <i class="ri-group-line ml-2 text-primary-600"></i> <span>طرف‌های حساب</span> </h2> 
+       <div class="flex items-center text-sm"> <span id="contactsCount" class="bg-primary-100 text-primary-700 dark:bg-primary-900 dark:text-primary-300 text-xs font-semibold px-2 py-1 rounded-full">۰ نفر</span> 
+       </div> 
+      </div> 
+      <div id="contactsList" class="grid grid-cols-1 md:grid-cols-2 gap-4 animate-slide-up"> 
+       <!-- Contacts will be dynamically populated here --> 
+      </div> 
+      <div id="emptyContactsMessage" class="bg-white dark:bg-gray-800 rounded-2xl p-6 text-center animate-scale-in"> 
+       <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-100 dark:bg-gray-700 mb-4"> <i class="ri-user-add-line text-3xl text-gray-400 dark:text-gray-500"></i> 
+       </div> 
+       <h3 class="text-lg font-medium text-gray-600 dark:text-gray-300 mb-2">هیچ طرف حسابی یافت نشد</h3> 
+       <p class="text-gray-500 dark:text-gray-400 text-sm mb-4">برای افزودن طرف حساب جدید از دکمه + استفاده کنید</p> 
+      </div> 
+     </div> 
+    </div> 
+   </div> <!-- Settings Page --> 
+   <div id="settings-page" class="page page-exit"> 
+    <div class="container max-w-6xl mx-auto px-4 py-4 pb-24"> 
+     <div class="flex justify-between items-center mb-6"> 
+      <h1 class="text-xl font-bold">تنظیمات</h1> 
+     </div> <!-- Profile Section --> 
+     <div class="bg-white dark:bg-gray-800 rounded-2xl p-5 shadow-sm mb-6"> 
+      <h2 class="text-lg font-bold mb-4 flex items-center"> <i class="ri-user-line ml-2 text-primary-600"></i> <span>پروفایل کاربری</span> </h2> 
+      <div class="flex items-center"> 
+       <div id="profileImageLarge" class="w-20 h-20 rounded-full bg-primary-600 flex items-center justify-center text-white text-2xl font-bold">
+         ک 
+       </div> 
+       <div class="mr-4"> 
+        <div id="profileNameLarge" class="font-bold text-lg">
+         کاربر جدید
+        </div> 
+        <div id="profileRoleLarge" class="text-gray-500 dark:text-gray-400">
+         کاربر عادی
+        </div> <button id="editProfileBtn" class="mt-2 text-sm text-primary-600 flex items-center"> <i class="ri-edit-line ml-1"></i> ویرایش پروفایل </button> 
+       </div> 
+      </div> 
+     </div> <!-- Appearance Settings --> 
+     <div class="bg-white dark:bg-gray-800 rounded-2xl p-5 shadow-sm mb-6"> 
+      <h2 class="text-lg font-bold mb-4 flex items-center"> <i class="ri-paint-brush-line ml-2 text-primary-600"></i> <span>ظاهر برنامه</span> </h2> 
+      <div class="flex justify-between items-center py-3 border-b border-gray-100 dark:border-gray-700"> 
+       <div class="flex items-center"> <i class="ri-moon-line ml-3 text-xl"></i> 
+        <div> 
+         <div class="font-medium">
+          حالت تاریک
+         </div> 
+         <div class="text-sm text-gray-500 dark:text-gray-400">
+          تغییر به حالت تاریک یا روشن
+         </div> 
+        </div> 
+       </div> 
+       <div> <button id="darkModeToggle" class="w-12 h-6 flex items-center bg-gray-200 dark:bg-gray-700 rounded-full px-1 relative"> 
+         <div class="w-5 h-5 bg-white rounded-full shadow-md transform duration-300 ease-in-out translate-x-0 dark:translate-x-6"></div> </button> 
+       </div> 
+      </div> 
+      <div class="flex justify-between items-center py-3 border-b border-gray-100 dark:border-gray-700"> 
+       <div class="flex items-center"> <i class="ri-font-size-2 ml-3 text-xl"></i> 
+        <div> 
+         <div class="font-medium">
+          اندازه فونت
+         </div> 
+         <div class="text-sm text-gray-500 dark:text-gray-400">
+          تغییر اندازه متن برنامه
+         </div> 
+        </div> 
+       </div> 
+       <div class="flex items-center"> <button id="decreaseFontBtn" class="w-8 h-8 flex items-center justify-center bg-gray-100 dark:bg-gray-700 rounded-lg"> <i class="ri-subtract-line"></i> </button> <span id="fontSizeText" class="mx-3">متوسط</span> <button id="increaseFontBtn" class="w-8 h-8 flex items-center justify-center bg-gray-100 dark:bg-gray-700 rounded-lg"> <i class="ri-add-line"></i> </button> 
+       </div> 
+      </div> 
+     </div> <!-- Data Management --> 
+     <div class="bg-white dark:bg-gray-800 rounded-2xl p-5 shadow-sm mb-6"> 
+      <h2 class="text-lg font-bold mb-4 flex items-center"> <i class="ri-database-2-line ml-2 text-primary-600"></i> <span>مدیریت داده‌ها</span> </h2> 
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4"> <button id="exportData" class="flex items-center justify-between p-4 bg-primary-50 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 rounded-xl hover:bg-primary-100 dark:hover:bg-primary-900/50 transition-colors"> 
+        <div class="flex items-center"> <i class="ri-download-2-line ml-3 text-xl"></i> 
+         <div class="text-right"> 
+          <div class="font-medium">
+           صادر کردن داده‌ها
+          </div> 
+          <div class="text-sm text-primary-600 dark:text-primary-400">
+           ذخیره اطلاعات در فایل
+          </div> 
+         </div> 
+        </div> <i class="ri-arrow-left-line"></i> </button> <label for="importData" class="flex items-center justify-between p-4 bg-primary-50 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 rounded-xl hover:bg-primary-100 dark:hover:bg-primary-900/50 transition-colors cursor-pointer"> 
+        <div class="flex items-center"> <i class="ri-upload-2-line ml-3 text-xl"></i> 
+         <div class="text-right"> 
+          <div class="font-medium">
+           وارد کردن داده‌ها
+          </div> 
+          <div class="text-sm text-primary-600 dark:text-primary-400">
+           بازیابی اطلاعات از فایل
+          </div> 
+         </div> 
+        </div> <i class="ri-arrow-left-line"></i> </label> 
+       <input type="file" id="importData" accept=".json" class="hidden"> 
+       <div class="md:col-span-2 p-4 bg-gray-50 dark:bg-gray-700 rounded-xl"> 
+        <div class="flex items-center text-gray-500 dark:text-gray-400"> <i class="ri-information-line ml-2 text-primary-600"></i> <span>آخرین پشتیبان‌گیری:</span> <span id="lastBackupTime" class="mr-1">هیچ‌وقت</span> 
+        </div> 
+       </div> 
+      </div> 
+     </div> <!-- Advanced Settings --> 
+     <div class="bg-white dark:bg-gray-800 rounded-2xl p-5 shadow-sm mb-6"> 
+      <h2 class="text-lg font-bold mb-4 flex items-center"> <i class="ri-settings-4-line ml-2 text-primary-600"></i> <span>تنظیمات پیشرفته</span> </h2> 
+      <div class="flex justify-between items-center py-3 border-b border-gray-100 dark:border-gray-700"> 
+       <div class="flex items-center"> <i class="ri-notification-4-line ml-3 text-xl"></i> 
+        <div> 
+         <div class="font-medium">
+          یادآوری‌ها
+         </div> 
+         <div class="text-sm text-gray-500 dark:text-gray-400">
+          نمایش یادآوری‌های سررسید
+         </div> 
+        </div> 
+       </div> 
+       <div> <button id="reminderToggle" class="w-12 h-6 bg-primary-600 flex items-center rounded-full px-1 relative"> 
+         <div class="w-5 h-5 bg-white rounded-full shadow-md transform translate-x-6"></div> </button> 
+       </div> 
+      </div> 
+      <div class="flex justify-between items-center py-3 border-b border-gray-100 dark:border-gray-700"> 
+       <div class="flex items-center"> <i class="ri-pie-chart-line ml-3 text-xl"></i> 
+        <div> 
+         <div class="font-medium">
+          نمودارهای تحلیلی
+         </div> 
+         <div class="text-sm text-gray-500 dark:text-gray-400">
+          نمایش تحلیل‌های پیشرفته
+         </div> 
+        </div> 
+       </div> 
+       <div> <button id="analyticsToggle" class="w-12 h-6 bg-primary-600 flex items-center rounded-full px-1 relative"> 
+         <div class="w-5 h-5 bg-white rounded-full shadow-md transform translate-x-6"></div> </button> 
+       </div> 
+      </div> 
+     </div> <!-- About --> 
+     <div class="bg-white dark:bg-gray-800 rounded-2xl p-5 shadow-sm"> 
+      <h2 class="text-lg font-bold mb-4 flex items-center"> <i class="ri-information-line ml-2 text-primary-600"></i> <span>درباره برنامه</span> </h2> 
+      <div class="text-center"> 
+       <div class="w-20 h-20 mx-auto bg-primary-100 dark:bg-primary-900 rounded-2xl flex items-center justify-center mb-3"> <i class="ri-wallet-3-line text-primary-600 text-3xl"></i> 
+       </div> 
+       <div class="font-bold text-lg">
+        مدیریت مالی شخصی
+       </div> 
+       <div class="text-sm text-gray-500 dark:text-gray-400">
+        نسخه ۱.۰.۰
+       </div> 
+       <div class="mt-4 text-sm text-gray-600 dark:text-gray-400">
+         طراحی شده برای مدیریت آسان و هوشمند امور مالی شخصی و کاری 
+       </div> 
+      </div> 
+     </div> 
+    </div> 
+   </div> <!-- Contact Details Page --> 
+   <div id="contact-details-page" class="page page-exit"> 
+    <div class="container max-w-6xl mx-auto px-4 py-4 pb-24"> 
+     <div class="flex items-center mb-6"> <button id="backToContacts" class="flex items-center text-primary-600 hover:text-primary-700 transition-all mr-4"> <i class="ri-arrow-right-line ml-1 text-xl"></i> <span>بازگشت</span> </button> 
+      <div class="flex items-center"> 
+       <div id="contactAvatarBig" class="w-12 h-12 rounded-full bg-primary-600 text-white flex items-center justify-center text-xl font-bold mr-3">
+        
+       </div> 
+       <div> 
+        <h1 id="contactDetailsName" class="text-xl font-bold"></h1> 
+        <p id="contactDetailsPhone" class="text-gray-500 dark:text-gray-400"></p> 
+       </div> 
+      </div> 
+     </div> <!-- Balance Summary --> 
+     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6"> 
+      <div class="bg-gradient-to-r from-primary-600 to-primary-400 p-5 rounded-2xl text-white shadow-lg"> 
+       <div class="flex items-center mb-2 text-white text-opacity-80"> <i class="ri-scales-3-line ml-2"></i> <span class="text-sm">وضعیت حساب</span> 
+       </div> 
+       <div id="contactDetailsBalance" class="text-2xl font-bold">
+        ۰ تومان
+       </div> 
+      </div> 
+      <div class="bg-white dark:bg-gray-800 p-5 rounded-2xl shadow-sm"> 
+       <div class="flex items-center mb-2 text-gray-500 dark:text-gray-400"> <i class="ri-history-line ml-2"></i> <span class="text-sm">آخرین تراکنش</span> 
+       </div> 
+       <div id="contactDetailsLastTransaction" class="text-lg font-semibold">
+        -
+       </div> 
+      </div> 
+      <div class="bg-white dark:bg-gray-800 p-5 rounded-2xl shadow-sm"> 
+       <div class="flex items-center mb-2 text-gray-500 dark:text-gray-400"> <i class="ri-file-list-3-line ml-2"></i> <span class="text-sm">تعداد تراکنش‌ها</span> 
+       </div> 
+       <div id="contactTransactionsCount" class="text-lg font-semibold">
+        ۰ تراکنش
+       </div> 
+      </div> 
+     </div> <!-- Receipt Actions --> 
+     <div class="bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-sm mb-6"> 
+      <div class="flex justify-between items-center"> 
+       <h2 class="text-lg font-bold flex items-center"> <i class="ri-bill-line ml-2 text-primary-600"></i> <span>رسیدها</span> </h2> <button id="generateHistoryReceipt" class="flex items-center bg-primary-600 hover:bg-primary-700 text-white py-2 px-4 rounded-xl transition-all duration-300 btn-3d"> <i class="ri-file-list-3-line ml-2"></i> دریافت رسید کل </button> 
+      </div> 
+     </div> <!-- Transaction History --> 
+     <div class="bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-sm mb-6"> 
+      <h2 class="text-lg font-bold mb-4 flex items-center"> <i class="ri-exchange-funds-line ml-2 text-primary-600"></i> <span>تاریخچه تراکنش‌ها</span> </h2> 
+      <div id="contactTransactionsList" class="space-y-3"> 
+       <!-- Contact transactions will be populated dynamically --> 
+      </div> 
+      <div id="emptyContactTransactionsMessage" class="text-center py-6 hidden">
+        <div class="text-gray-400 dark:text-gray-600 mb-2"><i class="ri-inbox-line text-4xl"></i></div>
+        <p class="text-gray-500 dark:text-gray-400">هیچ تراکنشی با این طرف حساب یافت نشد</p>
+        <button id="addNewContactTransactionBtn" class="mt-3 bg-primary-600 text-white px-4 py-2 rounded-lg inline-flex items-center">
+          <i class="ri-add-line ml-1"></i> افزودن تراکنش جدید
+        </button>
+      </div>
+     </div> <!-- Timeline --> 
+     <div class="bg-white dark:bg-gray-800 rounded-2xl p-5 shadow-sm mb-6"> 
+      <h2 class="text-lg font-bold mb-4 flex items-center"> <i class="ri-timeline-line ml-2 text-primary-600"></i> <span>خط زمانی تراکنش‌ها</span> </h2> 
+      <div id="transactionTimeline" class="timeline"> 
+       <!-- Timeline will be populated dynamically --> 
+      </div> 
+     </div> <!-- Transaction Chart --> 
+     <div class="bg-white dark:bg-gray-800 p-5 rounded-2xl shadow-sm mb-6"> 
+      <h3 class="text-lg font-bold mb-4 flex items-center"> <i class="ri-line-chart-line ml-2 text-primary-600"></i> نمودار تراکنش‌ها </h3> 
+      <div class="h-64"> 
+       <canvas id="contactTransactionChart"></canvas> 
+      </div> 
+     </div> 
+    </div> 
+   </div> 
+  </div> <!-- Mobile Navigation --> 
+  <div class="bottom-nav"> 
+   <div class="flex justify-around items-center px-2"> <button class="nav-item active" id="nav-home"> 
+     <div class="nav-icon"> <i class="ri-home-5-line"></i> 
+     </div> </button> <button class="nav-item" id="nav-transactions"> 
+     <div class="nav-icon"> <i class="ri-exchange-dollar-line"></i> 
+     </div> </button> <button class="nav-item add-button" id="nav-add"> 
+     <div class="nav-icon"> <i class="ri-add-line"></i> 
+     </div> </button> <button class="nav-item" id="nav-contacts"> 
+     <div class="nav-icon"> <i class="ri-user-3-line"></i> 
+     </div> </button> <button class="nav-item" id="nav-settings"> 
+     <div class="nav-icon"> <i class="ri-settings-3-line"></i> 
+     </div> </button> 
+   </div> 
+  </div> <!-- Add Menu --> 
+  <div id="addMenu" class="add-menu hidden"> 
+   <div class="add-menu-item" id="addTransaction"> 
+    <div class="w-8 h-8 rounded-full bg-primary-100 dark:bg-primary-900 flex items-center justify-center ml-2"> <i class="ri-add-circle-line text-primary-600"></i> 
+    </div> <span>تراکنش جدید</span> 
+   </div> 
+   <div class="add-menu-item" id="addContact"> 
+    <div class="w-8 h-8 rounded-full bg-success-100 dark:bg-success-900 flex items-center justify-center ml-2"> <i class="ri-user-add-line text-success-600"></i> 
+    </div> <span>طرف حساب جدید</span> 
+   </div> 
+  </div> <!-- Modals --> <!-- Add Transaction Modal --> 
+  <div id="addTransactionModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-filter backdrop-blur-sm transition-opacity hidden"> 
+   <div class="bg-white dark:bg-gray-800 rounded-2xl max-w-md w-full mx-4 transform transition-all duration-300 animate-scale-in p-6"> 
+    <div class="flex justify-between items-center mb-4"> 
+     <h3 id="transactionModalTitle" class="text-xl font-bold">ثبت تراکنش جدید</h3> <button id="closeAddTransactionModal" class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors"> <i class="ri-close-line text-2xl"></i> </button> 
+    </div> 
+    <form id="transactionForm" class="space-y-4"> 
+     <input type="hidden" id="editTransactionId" value="">
+     <div> <label for="title" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">عنوان</label> 
+      <input type="text" id="title" class="w-full px-3 py-2 bg-gray-100 dark:bg-gray-700 border-none rounded-xl text-base focus:outline-none focus:ring-2 focus:ring-primary-500" required> 
+     </div> 
+     <div> <label for="amount" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">مبلغ (تومان)</label> 
+      <input type="number" id="amount" class="w-full px-3 py-2 bg-gray-100 dark:bg-gray-700 border-none rounded-xl text-base focus:outline-none focus:ring-2 focus:ring-primary-500" required> 
+     </div> 
+     <div> <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">نوع تراکنش</label> 
+      <div class="grid grid-cols-2 gap-2"> <label class="flex items-center justify-center bg-gray-100 dark:bg-gray-700 py-2 px-4 rounded-xl cursor-pointer transition-all" id="type-income-label"> <input type="radio" name="type" id="type-income" value="income" class="hidden" checked> <i class="ri-arrow-left-down-line ml-2 text-success-500"></i> <span>درآمد</span> </label> <label class="flex items-center justify-center bg-gray-100 dark:bg-gray-700 py-2 px-4 rounded-xl cursor-pointer transition-all" id="type-expense-label"> <input type="radio" name="type" id="type-expense" value="expense" class="hidden"> <i class="ri-arrow-right-up-line ml-2 text-danger-500"></i> <span>هزینه</span> </label> 
+      </div> 
+      <input type="hidden" id="type" value="income"> 
+     </div> 
+     <div> <label for="category" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">دسته‌بندی</label> <select id="category" class="w-full px-3 py-2 bg-gray-100 dark:bg-gray-700 border-none rounded-xl text-base focus:outline-none focus:ring-2 focus:ring-primary-500"> <option value="personal">شخصی</option> <option value="work">کاری</option> <option value="food">خوراک</option> <option value="transport">حمل و نقل</option> <option value="bills">قبوض</option> <option value="entertainment">تفریح</option> <option value="other">سایر</option> </select> 
+     </div> 
+     <div class="grid grid-cols-2 gap-4"> 
+      <div> <label for="date" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">تاریخ</label> 
+       <input type="date" id="date" class="w-full px-3 py-2 bg-gray-100 dark:bg-gray-700 border-none rounded-xl text-base focus:outline-none focus:ring-2 focus:ring-primary-500" required> 
+      </div> 
+      <div> <label for="time" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">زمان</label> 
+       <input type="time" id="time" class="w-full px-3 py-2 bg-gray-100 dark:bg-gray-700 border-none rounded-xl text-base focus:outline-none focus:ring-2 focus:ring-primary-500" required> 
+      </div> 
+     </div> 
+     <div> <label for="description" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">توضیحات</label> <textarea id="description" rows="3" class="w-full px-3 py-2 bg-gray-100 dark:bg-gray-700 border-none rounded-xl text-base focus:outline-none focus:ring-2 focus:ring-primary-500"></textarea> 
+     </div> <button type="submit" class="w-full bg-primary-600 hover:bg-primary-700 text-white py-3 px-4 rounded-xl transition-all duration-300 flex items-center justify-center btn-3d"> <i class="ri-add-line ml-2"></i> <span id="transactionSubmitBtn">ثبت تراکنش</span> </button> 
+    </form> 
+   </div> 
+  </div> <!-- Add Contact Modal --> 
+  <div id="addContactModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-filter backdrop-blur-sm transition-opacity hidden"> 
+   <div class="bg-white dark:bg-gray-800 rounded-2xl max-w-md w-full mx-4 transform transition-all duration-300 animate-scale-in p-6"> 
+    <div class="flex justify-between items-center mb-4"> 
+     <h3 class="text-xl font-bold">افزودن طرف حساب جدید</h3> <button id="closeAddContactModal" class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors"> <i class="ri-close-line text-2xl"></i> </button> 
+    </div> 
+    <form id="contactForm" class="space-y-4"> 
+     <div> <label for="contactName" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">نام</label> 
+      <input type="text" id="contactName" class="w-full px-3 py-2 bg-gray-100 dark:bg-gray-700 border-none rounded-xl text-base focus:outline-none focus:ring-2 focus:ring-primary-500" required> 
+     </div> 
+     <div> <label for="contactPhone" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">شماره تماس</label> 
+      <input type="tel" id="contactPhone" class="w-full px-3 py-2 bg-gray-100 dark:bg-gray-700 border-none rounded-xl text-base focus:outline-none focus:ring-2 focus:ring-primary-500"> 
+     </div> 
+     <div> <label for="contactDescription" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">توضیحات</label> <textarea id="contactDescription" rows="3" class="w-full px-3 py-2 bg-gray-100 dark:bg-gray-700 border-none rounded-xl text-base focus:outline-none focus:ring-2 focus:ring-primary-500"></textarea> 
+     </div> <button type="submit" class="w-full bg-primary-600 hover:bg-primary-700 text-white py-3 px-4 rounded-xl transition-all duration-300 flex items-center justify-center btn-3d"> <i class="ri-user-add-line ml-2"></i> افزودن طرف حساب </button> 
+    </form> 
+   </div> 
+  </div> <!-- Add Contact Transaction Modal --> 
+  <div id="addContactTransactionModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-filter backdrop-blur-sm transition-opacity hidden"> 
+   <div class="bg-white dark:bg-gray-800 rounded-2xl max-w-md w-full mx-4 transform transition-all duration-300 animate-scale-in p-6"> 
+    <div class="flex justify-between items-center mb-4"> 
+     <h3 id="contactTransactionModalTitle" class="text-xl font-bold">ثبت تراکنش جدید</h3> <button id="closeAddContactTransactionModal" class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors"> <i class="ri-close-line text-2xl"></i> </button> 
+    </div> 
+    <form id="contactTransactionForm" class="space-y-4"> 
+     <input type="hidden" id="contactId"> 
+     <input type="hidden" id="editContactTransactionId" value="">
+     <div> <label for="transactionTitle" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">عنوان</label> 
+      <input type="text" id="transactionTitle" class="w-full px-3 py-2 bg-gray-100 dark:bg-gray-700 border-none rounded-xl text-base focus:outline-none focus:ring-2 focus:ring-primary-500" required> 
+     </div> 
+     <div> <label for="transactionAmount" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">مبلغ (تومان)</label> 
+      <input type="number" id="transactionAmount" class="w-full px-3 py-2 bg-gray-100 dark:bg-gray-700 border-none rounded-xl text-base focus:outline-none focus:ring-2 focus:ring-primary-500" required> 
+     </div> 
+     <div> <label for="transactionType" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">نوع تراکنش</label> <select id="transactionType" class="w-full px-3 py-2 bg-gray-100 dark:bg-gray-700 border-none rounded-xl text-base focus:outline-none focus:ring-2 focus:ring-primary-500"> <option value="receivable">پرداخت من به طرف حساب</option> <option value="payable">دریافت من از طرف حساب</option> <option value="deposit">امانت دریافتی (من بدهکارم)</option> <option value="loan">قرض‌الحسنه دریافتی (من بدهکارم)</option> <option value="deposit_return">بازپرداخت امانت</option> <option value="loan_return">بازپرداخت قرض‌الحسنه</option> </select> 
+     </div> 
+     <div> <label for="transactionDate" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">تاریخ</label> 
+      <input type="date" id="transactionDate" class="w-full px-3 py-2 bg-gray-100 dark:bg-gray-700 border-none rounded-xl text-base focus:outline-none focus:ring-2 focus:ring-primary-500" required> 
+     </div> 
+     <div> <label for="transactionDescription" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">توضیحات</label> <textarea id="transactionDescription" rows="3" class="w-full px-3 py-2 bg-gray-100 dark:bg-gray-700 border-none rounded-xl text-base focus:outline-none focus:ring-2 focus:ring-primary-500"></textarea> 
+     </div> <button type="submit" class="w-full bg-primary-600 hover:bg-primary-700 text-white py-3 px-4 rounded-xl transition-all duration-300 flex items-center justify-center btn-3d"> <i class="ri-add-line ml-2"></i> <span id="contactTransactionSubmitBtn">ثبت تراکنش</span> </button> 
+    </form> 
+   </div> 
+  </div> <!-- Receipt Modal --> 
+  <div id="receiptModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-filter backdrop-blur-sm transition-opacity hidden"> 
+   <div class="bg-white dark:bg-gray-800 rounded-2xl max-w-md w-full mx-4 transform transition-all duration-300 animate-scale-in p-6"> 
+    <div class="flex justify-between items-center mb-4"> 
+     <h3 class="text-lg font-semibold">رسید تراکنش</h3> <button id="closeReceiptModal" class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors"> <i class="ri-close-line text-2xl"></i> </button> 
+    </div> 
+    <div id="receiptContent" class="flex justify-center"> <!-- Receipt will be generated here --> 
+    </div> 
+    <div class="mt-6 flex justify-end space-x-4 space-x-reverse"> <button id="downloadReceiptPDF" class="bg-primary-600 hover:bg-primary-700 text-white py-2 px-4 rounded-xl transition-all duration-300 flex items-center justify-center btn-3d"> <i class="ri-file-pdf-line ml-2"></i> دانلود PDF </button> <button id="downloadReceipt" class="bg-gray-600 hover:bg-gray-700 text-white py-2 px-4 rounded-xl transition-all duration-300 flex items-center justify-center btn-3d"> <i class="ri-image-line ml-2"></i> دانلود تصویر </button> 
+    </div> 
+   </div> 
+  </div> <!-- History Receipt Modal --> 
+  <div id="historyReceiptModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-filter backdrop-blur-sm transition-opacity hidden"> 
+   <div class="bg-white dark:bg-gray-800 rounded-2xl max-w-2xl w-full mx-4 transform transition-all duration-300 animate-scale-in p-6 max-h-[90vh] overflow-auto"> 
+    <div class="flex justify-between items-center mb-4"> 
+     <h3 class="text-lg font-semibold">تاریخچه حساب</h3> <button id="closeHistoryReceiptModal" class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors"> <i class="ri-close-line text-2xl"></i> </button> 
+    </div> 
+    <div id="historyReceiptContent" class="flex justify-center"> <!-- History Receipt will be generated here --> 
+    </div> 
+    <div class="mt-6 flex justify-end space-x-4 space-x-reverse"> <button id="downloadHistoryReceiptPDF" class="bg-primary-600 hover:bg-primary-700 text-white py-2 px-4 rounded-xl transition-all duration-300 flex items-center justify-center btn-3d"> <i class="ri-file-pdf-line ml-2"></i> دانلود PDF </button> <button id="downloadHistoryReceipt" class="bg-gray-600 hover:bg-gray-700 text-white py-2 px-4 rounded-xl transition-all duration-300 flex items-center justify-center btn-3d"> <i class="ri-image-line ml-2"></i> دانلود تصویر </button> 
+    </div> 
+   </div> 
+  </div> <!-- Delete Confirmation Modal --> 
+  <div id="deleteModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-filter backdrop-blur-sm transition-opacity hidden"> 
+   <div class="bg-white dark:bg-gray-800 rounded-2xl max-w-md w-full mx-4 transform transition-all duration-300 animate-scale-in p-6"> 
+    <div class="flex items-center mb-4 text-danger-500"> 
+     <div class="w-12 h-12 rounded-full bg-danger-50 dark:bg-danger-900 flex items-center justify-center ml-3"> <i class="ri-error-warning-line text-2xl"></i> 
+     </div> 
+     <h3 class="text-lg font-semibold">تایید حذف</h3> 
+    </div> 
+    <p class="mb-6 text-gray-700 dark:text-gray-300">آیا از حذف این تراکنش اطمینان دارید؟ این عمل قابل بازگشت نیست.</p> 
+    <div class="flex justify-end space-x-4 space-x-reverse"> <button id="confirmDelete" class="bg-danger-600 hover:bg-danger-700 text-white py-2 px-4 rounded-xl transition-all duration-300 flex items-center justify-center btn-3d"> <i class="ri-delete-bin-line ml-2"></i> حذف </button> <button id="cancelDelete" class="bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-white py-2 px-4 rounded-xl transition-all duration-300"> انصراف </button> 
+    </div> 
+   </div> 
+  </div> <!-- Sort Options Modal --> 
+  <div id="sortOptionsModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-filter backdrop-blur-sm transition-opacity hidden"> 
+   <div class="bg-white dark:bg-gray-800 rounded-2xl max-w-md w-full mx-4 transform transition-all duration-300 animate-scale-in p-6"> 
+    <div class="flex justify-between items-center mb-4"> 
+     <h3 class="text-lg font-semibold">مرتب‌سازی تراکنش‌ها</h3> <button id="closeSortModal" class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors"> <i class="ri-close-line text-2xl"></i> </button> 
+    </div> 
+    <div class="space-y-2"> 
+     <div class="sort-option flex items-center p-3 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer transition-colors" data-sort="date" data-order="desc"> 
+      <div class="w-10 h-10 rounded-full bg-primary-100 dark:bg-primary-900 flex items-center justify-center ml-3"> <i class="ri-calendar-line text-primary-600"></i> 
+      </div> <span>جدیدترین تاریخ</span> 
+     </div> 
+     <div class="sort-option flex items-center p-3 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer transition-colors" data-sort="date" data-order="asc"> 
+      <div class="w-10 h-10 rounded-full bg-primary-100 dark:bg-primary-900 flex items-center justify-center ml-3"> <i class="ri-calendar-line text-primary-600"></i> 
+      </div> <span>قدیمی‌ترین تاریخ</span> 
+     </div> 
+     <div class="sort-option flex items-center p-3 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer transition-colors" data-sort="amount" data-order="desc"> 
+      <div class="w-10 h-10 rounded-full bg-primary-100 dark:bg-primary-900 flex items-center justify-center ml-3"> <i class="ri-money-dollar-circle-line text-primary-600"></i> 
+      </div> <span>بیشترین مبلغ</span> 
+     </div> 
+     <div class="sort-option flex items-center p-3 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer transition-colors" data-sort="amount" data-order="asc"> 
+      <div class="w-10 h-10 rounded-full bg-primary-100 dark:bg-primary-900 flex items-center justify-center ml-3"> <i class="ri-money-dollar-circle-line text-primary-600"></i> 
+      </div> <span>کمترین مبلغ</span> 
+     </div> 
+     <div class="sort-option flex items-center p-3 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer transition-colors" data-sort="title" data-order="asc"> 
+      <div class="w-10 h-10 rounded-full bg-primary-100 dark:bg-primary-900 flex items-center justify-center ml-3"> <i class="ri-a-b text-primary-600"></i> 
+      </div> <span>بر اساس عنوان (الف تا ی)</span> 
+     </div> 
+    </div> 
+   </div> 
+  </div> 
+  
+  <!-- Edit Profile Modal -->
+  <div id="editProfileModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-filter backdrop-blur-sm transition-opacity hidden">
+    <div class="bg-white dark:bg-gray-800 rounded-2xl max-w-md w-full mx-4 transform transition-all duration-300 animate-scale-in p-6">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="text-xl font-bold">ویرایش پروفایل</h3>
+        <button id="closeEditProfileModal" class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors">
+          <i class="ri-close-line text-2xl"></i>
+        </button>
+      </div>
+      <form id="profileForm" class="space-y-4">
+        <div class="flex flex-col items-center mb-4">
+          <div id="profileImagePreview" class="w-24 h-24 rounded-full bg-primary-600 flex items-center justify-center text-white text-3xl font-bold mb-2 relative overflow-hidden">
+            <span id="profileInitialLarge">ک</span>
+          </div>
+          <label for="profileImage" class="text-sm text-primary-600 flex items-center cursor-pointer">
+            <i class="ri-camera-line ml-1"></i> تغییر تصویر
+          </label>
+          <input type="file" id="profileImage" accept="image/*" class="hidden">
+        </div>
+        <div>
+          <label for="profileFullName" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">نام کامل</label>
+          <input type="text" id="profileFullName" class="w-full px-3 py-2 bg-gray-100 dark:bg-gray-700 border-none rounded-xl text-base focus:outline-none focus:ring-2 focus:ring-primary-500" required>
+        </div>
+        <div>
+          <label for="profileEmail" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">ایمیل</label>
+          <input type="email" id="profileEmail" class="w-full px-3 py-2 bg-gray-100 dark:bg-gray-700 border-none rounded-xl text-base focus:outline-none focus:ring-2 focus:ring-primary-500">
+        </div>
+        <div>
+          <label for="profilePhone" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">شماره تماس</label>
+          <input type="tel" id="profilePhone" class="w-full px-3 py-2 bg-gray-100 dark:bg-gray-700 border-none rounded-xl text-base focus:outline-none focus:ring-2 focus:ring-primary-500">
+        </div>
+        <div>
+          <label for="profileRole" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">نقش</label>
+          <select id="profileRoleSelect" class="w-full px-3 py-2 bg-gray-100 dark:bg-gray-700 border-none rounded-xl text-base focus:outline-none focus:ring-2 focus:ring-primary-500">
+            <option value="کاربر عادی">کاربر عادی</option>
+            <option value="مدیر مالی">مدیر مالی</option>
+            <option value="حسابدار">حسابدار</option>
+            <option value="مدیر کسب و کار">مدیر کسب و کار</option>
+          </select>
+        </div>
+        <button type="submit" class="w-full bg-primary-600 hover:bg-primary-700 text-white py-3 px-4 rounded-xl transition-all duration-300 flex items-center justify-center btn-3d">
+          <i class="ri-save-line ml-2"></i> ذخیره تغییرات
+        </button>
+      </form>
+    </div>
+  </div>
+  
+  <script>
+    // Initialize the application
+    document.addEventListener('DOMContentLoaded', function() {
+      // Check for dark mode preference
+      if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.documentElement.classList.add('dark');
+      }
+      
+      // Listen for changes to color scheme preference
+      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
+        if (event.matches) {
+          document.documentElement.classList.add('dark');
+        } else {
+          document.documentElement.classList.remove('dark');
+        }
+      });
+      
+      // Initialize variables
+      let transactions = [];
+      let currentTransactionId = 1;
+      let deleteTransactionId = null;
+      
+      // Contacts variables
+      let contacts = [];
+      let contactTransactions = [];
+      let currentContactId = 1;
+      let currentContactTransactionId = 1;
+      let deleteContactTransactionId = null;
+      let currentViewingContactId = null;
+      
+      // User profile data
+      let userProfile = {
+        name: 'کاربر جدید',
+        role: 'کاربر عادی',
+        avatar: null, // Base64 encoded image or null
+        email: '',
+        phone: ''
+      };
+      
+      // Sorting variables
+      let currentSort = {
+        field: 'date',
+        order: 'desc'
+      };
+      
+      let contactsCurrentSort = {
+        field: 'date',
+        order: 'desc'
+      };
+      
+      // Contact transaction chart
+      let contactTransactionChart = null;
+      
+      // Font size tracking
+      let currentFontSize = 'medium'; // 'small', 'medium', 'large'
+      
+      // Load data from localStorage if available
+      function loadFromLocalStorage() {
+        try {
+          const savedTransactions = localStorage.getItem('transactions');
+          if (savedTransactions) {
+            transactions = JSON.parse(savedTransactions);
+            // Convert string dates back to Date objects
+            transactions.forEach(transaction => {
+              transaction.date = new Date(transaction.date);
+            });
+            currentTransactionId = Math.max(...transactions.map(t => t.id || 0), 0) + 1;
+          }
+          
+          const savedContacts = localStorage.getItem('contacts');
+          if (savedContacts) {
+            contacts = JSON.parse(savedContacts);
+            currentContactId = Math.max(...contacts.map(c => c.id || 0), 0) + 1;
+          }
+          
+          const savedContactTransactions = localStorage.getItem('contactTransactions');
+          if (savedContactTransactions) {
+            contactTransactions = JSON.parse(savedContactTransactions);
+            // Convert string dates back to Date objects
+            contactTransactions.forEach(transaction => {
+              transaction.date = new Date(transaction.date);
+            });
+            currentContactTransactionId = Math.max(...contactTransactions.map(t => t.id || 0), 0) + 1;
+          }
+          
+          const savedUserProfile = localStorage.getItem('userProfile');
+          if (savedUserProfile) {
+            userProfile = JSON.parse(savedUserProfile);
+          }
+          
+          const savedDarkMode = localStorage.getItem('darkMode');
+          if (savedDarkMode === 'true') {
+            document.documentElement.classList.add('dark');
+          } else if (savedDarkMode === 'false') {
+            document.documentElement.classList.remove('dark');
+          }
+          
+          const savedFontSize = localStorage.getItem('fontSize');
+          if (savedFontSize) {
+            currentFontSize = savedFontSize;
+            applyFontSize(currentFontSize);
+          }
+        } catch (error) {
+          console.error('Error loading data from localStorage:', error);
+          // If there's an error, proceed with empty arrays
+          transactions = [];
+          contacts = [];
+          contactTransactions = [];
+        }
+      }
+      
+      // Save data to localStorage
+      function saveToLocalStorage() {
+        try {
+          localStorage.setItem('transactions', JSON.stringify(transactions));
+          localStorage.setItem('contacts', JSON.stringify(contacts));
+          localStorage.setItem('contactTransactions', JSON.stringify(contactTransactions));
+          localStorage.setItem('userProfile', JSON.stringify(userProfile));
+          localStorage.setItem('darkMode', document.documentElement.classList.contains('dark').toString());
+          localStorage.setItem('fontSize', currentFontSize);
+          
+          // Update the last backup time
+          const now = new Date();
+          const persianDate = new Intl.DateTimeFormat('fa-IR', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit'
+          }).format(now);
+          localStorage.setItem('lastBackupTime', persianDate);
+          
+          if (document.getElementById('lastBackupTime')) {
+            document.getElementById('lastBackupTime').textContent = persianDate;
+          }
+        } catch (error) {
+          console.error('Error saving data to localStorage:', error);
+          showToast('خطا در ذخیره‌سازی اطلاعات!', 'error');
+        }
+      }
+      
+      // Apply font size
+      function applyFontSize(size) {
+        const html = document.documentElement;
+        switch(size) {
+          case 'small':
+            html.style.fontSize = '14px';
+            break;
+          case 'medium':
+            html.style.fontSize = '16px';
+            break;
+          case 'large':
+            html.style.fontSize = '18px';
+            break;
+        }
+        
+        if (document.getElementById('fontSizeText')) {
+          let sizeText = 'متوسط';
+          if (size === 'small') sizeText = 'کوچک';
+          if (size === 'large') sizeText = 'بزرگ';
+          document.getElementById('fontSizeText').textContent = sizeText;
+        }
+      }
+      
+      // Mobile Navigation
+      document.getElementById('nav-home').addEventListener('click', function() {
+        navigateToPage('home-page');
+        setActiveNavItem('nav-home');
+      });
+      
+      document.getElementById('nav-transactions').addEventListener('click', function() {
+        navigateToPage('transactions-page');
+        setActiveNavItem('nav-transactions');
+      });
+      
+      document.getElementById('nav-contacts').addEventListener('click', function() {
+        navigateToPage('contacts-page');
+        setActiveNavItem('nav-contacts');
+      });
+      
+      document.getElementById('nav-settings').addEventListener('click', function() {
+        navigateToPage('settings-page');
+        setActiveNavItem('nav-settings');
+      });
+      
+      document.getElementById('nav-add').addEventListener('click', function() {
+        toggleAddMenu();
+      });
+      
+      // Navigation function
+      function navigateToPage(pageId) {
+        const pages = document.querySelectorAll('.page');
+        pages.forEach(page => {
+          if (page.id === pageId) {
+            page.classList.remove('page-exit');
+            page.classList.add('page-enter');
+            setTimeout(() => {
+              page.classList.remove('page-enter');
+              page.classList.add('page-active');
+            }, 50);
+          } else {
+            page.classList.remove('page-active', 'page-enter');
+            page.classList.add('page-exit');
+          }
+        });
+        
+        // Close addMenu if it's open
+        document.getElementById('addMenu').classList.add('hidden');
+      }
+      
+      // Set active navigation item
+      function setActiveNavItem(navId) {
+        document.querySelectorAll('.nav-item').forEach(item => {
+          item.classList.remove('active');
+        });
+        document.getElementById(navId).classList.add('active');
+      }
+      
+      // Toggle add menu
+      function toggleAddMenu() {
+        const addMenu = document.getElementById('addMenu');
+        addMenu.classList.toggle('hidden');
+      }
+      
+      // Add Menu options
+      document.getElementById('addTransaction').addEventListener('click', function() {
+        document.getElementById('addMenu').classList.add('hidden');
+        openTransactionModal();
+      });
+      
+      document.getElementById('addContact').addEventListener('click', function() {
+        document.getElementById('addMenu').classList.add('hidden');
+        document.getElementById('addContactModal').classList.remove('hidden');
+      });
+      
+      // Additional direct UI links
+      document.getElementById('viewAllTransactions').addEventListener('click', function(e) {
+        e.preventDefault();
+        navigateToPage('transactions-page');
+        setActiveNavItem('nav-transactions');
+      });
+      
+      // Update profile with user data
+      function updateProfileUI() {
+        // Update small profile in header
+        const profileInitial = document.getElementById('profileInitial');
+        const profileName = document.getElementById('profileName');
+        const profileRole = document.getElementById('profileRole');
+        const profilePicContainer = document.getElementById('profilePicContainer');
+        
+        if (profileName) profileName.textContent = userProfile.name;
+        if (profileRole) profileRole.textContent = userProfile.role;
+        
+        if (profileInitial) {
+          const initial = userProfile.name ? userProfile.name.charAt(0) : 'ک';
+          profileInitial.textContent = initial;
+        }
+        
+        if (profilePicContainer) {
+          if (userProfile.avatar) {
+            profilePicContainer.style.backgroundImage = `url(${userProfile.avatar})`;
+            if (profileInitial) profileInitial.style.display = 'none';
+          } else {
+            profilePicContainer.style.backgroundImage = '';
+            if (profileInitial) profileInitial.style.display = 'block';
+          }
+        }
+        
+        // Update large profile in settings
+        const profileNameLarge = document.getElementById('profileNameLarge');
+        const profileRoleLarge = document.getElementById('profileRoleLarge');
+        const profileImageLarge = document.getElementById('profileImageLarge');
+        
+        if (profileNameLarge) profileNameLarge.textContent = userProfile.name;
+        if (profileRoleLarge) profileRoleLarge.textContent = userProfile.role;
+        
+        if (profileImageLarge) {
+          if (userProfile.avatar) {
+            profileImageLarge.style.backgroundImage = `url(${userProfile.avatar})`;
+            profileImageLarge.innerHTML = '';
+          } else {
+            profileImageLarge.style.backgroundImage = '';
+            profileImageLarge.innerHTML = `<span>${userProfile.name.charAt(0)}</span>`;
+          }
+        }
+      }
+      
+      // Format amount to Persian numbers with commas
+      function formatAmount(amount) {
+        return new Intl.NumberFormat('fa-IR').format(amount) + ' تومان';
+      }
+      
+      // Format date to Persian format
+      function formatDate(date) {
+        return new Intl.DateTimeFormat('fa-IR', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric'
+        }).format(date);
+      }
+      
+      // Format time to Persian format with seconds
+      function formatTime(date) {
+        return new Intl.DateTimeFormat('fa-IR', {
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit'
+        }).format(date);
+      }
+      
+      // Format datetime to Persian format
+      function formatDateTime(date) {
+        return formatDate(date) + ' - ' + formatTime(date);
+      }
+      
+      // Update weekly calendar
+      function updateWeeklyCalendar() {
+        const weeklyCalendar = document.getElementById('weeklyCalendar');
+        if (!weeklyCalendar) return;
+        
+        weeklyCalendar.innerHTML = '';
+        
+        const today = new Date();
+        const weekdayNames = ['شنبه', 'یکشنبه', 'دوشنبه', 'سه‌شنبه', 'چهارشنبه', 'پنج‌شنبه', 'جمعه'];
+        const weekdayShort = ['ش', 'ی', 'د', 'س', 'چ', 'پ', 'ج'];
+        
+        // Calculate the start of the week (Saturday in Persian calendar)
+        let startOfWeek = new Date(today);
+        const currentDayOfWeek = today.getDay();
+        // Convert Sunday (0) to 1, Monday (1) to 2, ..., Saturday (6) to 0
+        const persianDayOfWeek = (currentDayOfWeek + 1) % 7;
+        startOfWeek.setDate(today.getDate() - persianDayOfWeek);
+        
+        for (let i = 0; i < 7; i++) {
+          const date = new Date(startOfWeek);
+          date.setDate(startOfWeek.getDate() + i);
+          
+          const persianDate = new Intl.DateTimeFormat('fa-IR', {
+            day: 'numeric',
+            month: 'numeric'
+          }).format(date);
+          
+          const [day, month] = persianDate.split('/');
+          
+          const dayElement = document.createElement('div');
+          dayElement.className = 'week-day';
+          if (date.toDateString() === today.toDateString()) {
+            dayElement.classList.add('active');
+          }
+          
+          dayElement.innerHTML = `
+            <span class="text-sm text-gray-500 dark:text-gray-400">${weekdayShort[i]}</span>
+            <span class="text-lg font-bold">${day}</span>
+          `;
+          
+          weeklyCalendar.appendChild(dayElement);
+        }
+      }
+      
+      // Generate reminders from transactions and contacts
+      function updateReminders() {
+        const reminderSlider = document.getElementById('reminderSlider');
+        if (!reminderSlider) return;
+        
+        reminderSlider.innerHTML = '';
+        
+        // If there are no transactions or contacts yet
+        if (transactions.length === 0 && contactTransactions.length === 0) {
+          const emptyReminder = document.createElement('div');
+          emptyReminder.className = 'reminder-slide reminder-upcoming animate-float w-full text-center';
+          emptyReminder.innerHTML = `
+            <div class="flex justify-center items-center mb-3">
+              <div class="w-12 h-12 rounded-full bg-primary-100 dark:bg-primary-900 flex items-center justify-center">
+                <i class="ri-information-line text-primary-500 text-xl"></i>
+              </div>
+            </div>
+            <div class="text-lg font-bold mb-2">هیچ یادآوری موجود نیست</div>
+            <div class="text-sm text-gray-500 dark:text-gray-400">
+              با افزودن تراکنش‌ها و تعیین تاریخ‌های سررسید، یادآوری‌ها اینجا نمایش داده می‌شوند.
+            </div>
+          `;
+          reminderSlider.appendChild(emptyReminder);
+          return;
+        }
+        
+        // Create reminders from upcoming bill payments, debt due dates, etc.
+        // This is just an example - you'll need to customize based on your actual data
+        const today = new Date();
+        const oneWeekLater = new Date(today);
+        oneWeekLater.setDate(today.getDate() + 7);
+        
+        // Filter upcoming transactions that are expenses
+        const upcomingExpenses = transactions.filter(t => 
+          t.type === 'expense' && 
+          new Date(t.date) > today && 
+          new Date(t.date) < oneWeekLater
+        );
+        
+        // Sort by date (closest first)
+        upcomingExpenses.sort((a, b) => new Date(a.date) - new Date(b.date));
+        
+        // Filter upcoming contact payments that I owe to others
+        const upcomingPayables = contactTransactions.filter(t => 
+          (t.type === 'receivable' || t.type === 'deposit' || t.type === 'loan') && 
+          new Date(t.date) > today && 
+          new Date(t.date) < oneWeekLater
+        );
+        
+        // Sort by date (closest first)
+        upcomingPayables.sort((a, b) => new Date(a.date) - new Date(b.date));
+        
+        // Combine and limit to 3 items
+        const reminders = [...upcomingExpenses, ...upcomingPayables].slice(0, 3);
+        
+        if (reminders.length === 0) {
+          const noReminder = document.createElement('div');
+          noReminder.className = 'reminder-slide reminder-upcoming animate-float w-full text-center';
+          noReminder.innerHTML = `
+            <div class="flex justify-center items-center mb-3">
+              <div class="w-12 h-12 rounded-full bg-primary-100 dark:bg-primary-900 flex items-center justify-center">
+                <i class="ri-check-line text-primary-500 text-xl"></i>
+              </div>
+            </div>
+            <div class="text-lg font-bold mb-2">یادآوری فوری ندارید</div>
+            <div class="text-sm text-gray-500 dark:text-gray-400">
+              همه تراکنش‌های شما در روزهای آینده انجام شده‌اند.
+            </div>
+          `;
+          reminderSlider.appendChild(noReminder);
+          return;
+        }
+        
+        // Create reminder elements
+        reminders.forEach(reminder => {
+          const daysUntil = Math.ceil((new Date(reminder.date) - today) / (1000 * 60 * 60 * 24));
+          
+          let reminderType = 'upcoming';
+          if (daysUntil <= 1) {
+            reminderType = 'urgent';
+          } else if (daysUntil <= 3) {
+            reminderType = 'soon';
+          }
+          
+          const reminderElement = document.createElement('div');
+          reminderElement.className = `reminder-slide reminder-${reminderType} animate-float`;
+          
+          // Check if it's a transaction or contact transaction
+          if (reminder.hasOwnProperty('category')) {
+            // It's a regular transaction
+            reminderElement.innerHTML = `
+              <div class="flex justify-between items-start mb-3">
+                <div class="flex items-center">
+                  <div class="w-8 h-8 rounded-full bg-${reminderType === 'urgent' ? 'danger' : reminderType === 'soon' ? 'warning' : 'primary'}-100 dark:bg-${reminderType === 'urgent' ? 'danger' : reminderType === 'soon' ? 'warning' : 'primary'}-900 flex items-center justify-center mr-2">
+                    <i class="ri-alarm-warning-fill text-${reminderType === 'urgent' ? 'danger' : reminderType === 'soon' ? 'warning' : 'primary'}-500"></i>
+                  </div>
+                  <span class="font-bold">${reminder.title}</span>
+                </div>
+                <div class="text-xs bg-${reminderType === 'urgent' ? 'danger' : reminderType === 'soon' ? 'warning' : 'primary'}-100 text-${reminderType === 'urgent' ? 'danger' : reminderType === 'soon' ? 'warning' : 'primary'}-700 dark:bg-${reminderType === 'urgent' ? 'danger' : reminderType === 'soon' ? 'warning' : 'primary'}-900 dark:text-${reminderType === 'urgent' ? 'danger' : reminderType === 'soon' ? 'warning' : 'primary'}-300 font-bold px-2 py-1 rounded-lg">
+                  ${daysUntil === 0 ? 'امروز' : daysUntil === 1 ? 'فردا' : daysUntil + ' روز'}
+                </div>
+              </div>
+              <div class="text-lg font-bold text-${reminderType === 'urgent' ? 'danger' : reminderType === 'soon' ? 'warning' : 'primary'}-600 dark:text-${reminderType === 'urgent' ? 'danger' : reminderType === 'soon' ? 'warning' : 'primary'}-400 mb-2">
+                ${formatAmount(reminder.amount)}
+              </div>
+              <div class="text-xs text-gray-500 dark:text-gray-400">
+                سررسید: ${formatDate(new Date(reminder.date))}
+              </div>
+            `;
+          } else {
+            // It's a contact transaction
+            const contactName = contacts.find(c => c.id === reminder.contactId)?.name || 'طرف حساب';
+            
+            let transactionTypeText = '';
+            let icon = '';
+            
+            switch(reminder.type) {
+              case 'receivable':
+                transactionTypeText = 'پرداخت به ' + contactName;
+                icon = 'ri-arrow-right-circle-line';
+                break;
+              case 'deposit':
+                transactionTypeText = 'امانت دریافتی از ' + contactName;
+                icon = 'ri-arrow-left-circle-line';
+                break;
+              case 'loan':
+                transactionTypeText = 'قرض از ' + contactName;
+                icon = 'ri-money-dollar-circle-line';
+                break;
+              default:
+                transactionTypeText = 'تراکنش با ' + contactName;
+                icon = 'ri-exchange-funds-line';
+            }
+            
+            reminderElement.innerHTML = `
+              <div class="flex justify-between items-start mb-3">
+                <div class="flex items-center">
+                  <div class="w-8 h-8 rounded-full bg-${reminderType === 'urgent' ? 'danger' : reminderType === 'soon' ? 'warning' : 'primary'}-100 dark:bg-${reminderType === 'urgent' ? 'danger' : reminderType === 'soon' ? 'warning' : 'primary'}-900 flex items-center justify-center mr-2">
+                    <i class="${icon} text-${reminderType === 'urgent' ? 'danger' : reminderType === 'soon' ? 'warning' : 'primary'}-500"></i>
+                  </div>
+                  <span class="font-bold">${reminder.title}</span>
+                </div>
+                <div class="text-xs bg-${reminderType === 'urgent' ? 'danger' : reminderType === 'soon' ? 'warning' : 'primary'}-100 text-${reminderType === 'urgent' ? 'danger' : reminderType === 'soon' ? 'warning' : 'primary'}-700 dark:bg-${reminderType === 'urgent' ? 'danger' : reminderType === 'soon' ? 'warning' : 'primary'}-900 dark:text-${reminderType === 'urgent' ? 'danger' : reminderType === 'soon' ? 'warning' : 'primary'}-300 font-bold px-2 py-1 rounded-lg">
+                  ${daysUntil === 0 ? 'امروز' : daysUntil === 1 ? 'فردا' : daysUntil + ' روز'}
+                </div>
+              </div>
+              <div class="text-lg font-bold text-${reminderType === 'urgent' ? 'danger' : reminderType === 'soon' ? 'warning' : 'primary'}-600 dark:text-${reminderType === 'urgent' ? 'danger' : reminderType === 'soon' ? 'warning' : 'primary'}-400 mb-2">
+                ${formatAmount(reminder.amount)}
+              </div>
+              <div class="text-xs text-gray-500 dark:text-gray-400">
+                ${transactionTypeText}<br>
+                سررسید: ${formatDate(new Date(reminder.date))}
+              </div>
+            `;
+          }
+          
+          reminderSlider.appendChild(reminderElement);
+        });
+      }
+      
+      // Calculate balance totals
+      function calculateBalances() {
+        // Calculate total balance
+        const totalIncome = transactions
+          .filter(t => t.type === 'income')
+          .reduce((sum, t) => sum + t.amount, 0);
+          
+        const totalExpense = transactions
+          .filter(t => t.type === 'expense')
+          .reduce((sum, t) => sum + t.amount, 0);
+          
+        const totalBalance = totalIncome - totalExpense;
+        
+        // Calculate monthly income and expense
+        const today = new Date();
+        const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+        
+        const monthlyIncome = transactions
+          .filter(t => t.type === 'income' && new Date(t.date) >= startOfMonth)
+          .reduce((sum, t) => sum + t.amount, 0);
+          
+        const monthlyExpense = transactions
+          .filter(t => t.type === 'expense' && new Date(t.date) >= startOfMonth)
+          .reduce((sum, t) => sum + t.amount, 0);
+        
+        // Calculate receivables and payables
+        const totalReceivable = contactTransactions
+          .filter(t => t.type === 'payable' || t.type === 'deposit_return' || t.type === 'loan_return')
+          .reduce((sum, t) => sum + t.amount, 0);
+          
+        const totalPayable = contactTransactions
+          .filter(t => t.type === 'receivable' || t.type === 'deposit' || t.type === 'loan')
+          .reduce((sum, t) => sum + t.amount, 0);
+          
+        const netBalance = totalReceivable - totalPayable;
+        
+        // Count unique contacts with receivables and payables
+        const receivableContacts = new Set(
+          contactTransactions
+            .filter(t => t.type === 'payable' || t.type === 'deposit_return' || t.type === 'loan_return')
+            .map(t => t.contactId)
+        );
+        
+        const payableContacts = new Set(
+          contactTransactions
+            .filter(t => t.type === 'receivable' || t.type === 'deposit' || t.type === 'loan')
+            .map(t => t.contactId)
+        );
+        
+        return {
+          totalBalance,
+          monthlyIncome,
+          monthlyExpense,
+          totalReceivable,
+          totalPayable,
+          netBalance,
+          receivableCount: receivableContacts.size,
+          payableCount: payableContacts.size
+        };
+      }
+      
+      // Update balance display on all pages
+      function updateBalanceDisplay() {
+        const balances = calculateBalances();
+        
+        // Update home page
+        if (document.getElementById('totalBalanceHome')) {
+          document.getElementById('totalBalanceHome').textContent = formatAmount(balances.totalBalance);
+        }
+        
+        if (document.getElementById('monthlyIncomeHome')) {
+          document.getElementById('monthlyIncomeHome').textContent = formatAmount(balances.monthlyIncome);
+        }
+        
+        if (document.getElementById('monthlyExpenseHome')) {
+          document.getElementById('monthlyExpenseHome').textContent = formatAmount(balances.monthlyExpense);
+        }
+        
+        if (document.getElementById('totalReceivableHome')) {
+          document.getElementById('totalReceivableHome').textContent = formatAmount(balances.totalReceivable);
+        }
+        
+        if (document.getElementById('totalPayableHome')) {
+          document.getElementById('totalPayableHome').textContent = formatAmount(balances.totalPayable);
+        }
+        
+        if (document.getElementById('receivableCountHome')) {
+          document.getElementById('receivableCountHome').textContent = `از ${balances.receivableCount} نفر`;
+        }
+        
+        if (document.getElementById('payableCountHome')) {
+          document.getElementById('payableCountHome').textContent = `به ${balances.payableCount} نفر`;
+        }
+        
+        // Update transactions page
+        if (document.getElementById('totalBalance')) {
+          document.getElementById('totalBalance').textContent = formatAmount(balances.totalBalance);
+        }
+        
+        if (document.getElementById('monthlyIncome')) {
+          document.getElementById('monthlyIncome').textContent = formatAmount(balances.monthlyIncome);
+        }
+        
+        if (document.getElementById('monthlyExpense')) {
+          document.getElementById('monthlyExpense').textContent = formatAmount(balances.monthlyExpense);
+        }
+        
+        // Update contacts page
+        if (document.getElementById('totalReceivable')) {
+          document.getElementById('totalReceivable').textContent = formatAmount(balances.totalReceivable);
+        }
+        
+        if (document.getElementById('totalPayable')) {
+          document.getElementById('totalPayable').textContent = formatAmount(balances.totalPayable);
+        }
+        
+        if (document.getElementById('netBalance')) {
+          const netBalanceEl = document.getElementById('netBalance');
+          if (balances.netBalance > 0) {
+            netBalanceEl.textContent = formatAmount(balances.netBalance) + ' طلب';
+            netBalanceEl.className = 'text-2xl font-bold text-success-500';
+          } else if (balances.netBalance < 0) {
+            netBalanceEl.textContent = formatAmount(Math.abs(balances.netBalance)) + ' بدهی';
+            netBalanceEl.className = 'text-2xl font-bold text-danger-500';
+          } else {
+            netBalanceEl.textContent = 'تسویه شده';
+            netBalanceEl.className = 'text-2xl font-bold text-gray-500';
+          }
+        }
+      }
+      
+      // Update recent transactions on home page
+      function updateRecentTransactions() {
+        const recentTransactionsContainer = document.getElementById('recentTransactions');
+        if (!recentTransactionsContainer) return;
+        
+        recentTransactionsContainer.innerHTML = '';
+        
+        // If no transactions yet
+        if (transactions.length === 0) {
+          recentTransactionsContainer.innerHTML = `
+            <div class="text-center py-6">
+              <div class="text-gray-400 dark:text-gray-600 mb-2"><i class="ri-inbox-line text-4xl"></i></div>
+              <p class="text-gray-500 dark:text-gray-400">هیچ تراکنشی ثبت نشده است</p>
+              <button id="addFirstTransaction" class="mt-3 bg-primary-600 text-white px-4 py-2 rounded-lg inline-flex items-center">
+                <i class="ri-add-line ml-1"></i> افزودن اولین تراکنش
+              </button>
+            </div>
+          `;
+          
+          document.getElementById('addFirstTransaction').addEventListener('click', function() {
+            openTransactionModal();
+          });
+          
+          return;
+        }
+        
+        // Get most recent 3 transactions
+        const recentTransactions = [...transactions]
+          .sort((a, b) => new Date(b.date) - new Date(a.date))
+          .slice(0, 3);
+        
+        recentTransactions.forEach(transaction => {
+          const transactionElement = document.createElement('div');
+          transactionElement.className = 'transaction-card bg-white dark:bg-gray-700 p-3 rounded-xl mb-3 flex justify-between items-center';
+          
+          const iconClass = transaction.type === 'income' 
+            ? 'ri-arrow-left-down-line text-success-600' 
+            : 'ri-arrow-right-up-line text-danger-600';
+            
+          const bgClass = transaction.type === 'income'
+            ? 'bg-success-100 dark:bg-success-900'
+            : 'bg-danger-100 dark:bg-danger-900';
+            
+          const amountClass = transaction.type === 'income'
+            ? 'text-success-600 dark:text-success-400'
+            : 'text-danger-600 dark:text-danger-400';
+            
+          const amountPrefix = transaction.type === 'income' ? '+' : '-';
+          
+          transactionElement.innerHTML = `
+            <div class="flex items-center">
+              <div class="w-10 h-10 rounded-xl ${bgClass} flex items-center justify-center ml-3">
+                <i class="${iconClass} text-xl"></i>
+              </div>
+              <div>
+                <div class="font-bold">${transaction.title}</div>
+                <div class="text-xs text-gray-500 dark:text-gray-400">${formatDate(new Date(transaction.date))}</div>
+              </div>
+            </div>
+            <div class="${amountClass} font-bold">${amountPrefix}${new Intl.NumberFormat('fa-IR').format(transaction.amount)}</div>
+          `;
+          
+          recentTransactionsContainer.appendChild(transactionElement);
+        });
+      }
+      
+      // Update transactions list on transactions page
+      function updateTransactionsList(filtered = false) {
+        const transactionList = document.getElementById('transactionList');
+        const emptyMessage = document.getElementById('emptyTransactionMessage');
+        const transactionCount = document.getElementById('transactionCount');
+        
+        if (!transactionList || !emptyMessage || !transactionCount) return;
+        
+        // Filter transactions if necessary
+        let displayTransactions = [...transactions];
+        
+        if (filtered) {
+          const filterText = document.getElementById('filterText').value.toLowerCase();
+          const filterCategory = document.getElementById('filterCategory').value;
+          const filterType = document.getElementById('filterType').value;
+          const filterStartDate = document.getElementById('filterStartDate').value;
+          const filterEndDate = document.getElementById('filterEndDate').value;
+          
+          if (filterText) {
+            displayTransactions = displayTransactions.filter(t => 
+              t.title.toLowerCase().includes(filterText) || 
+              (t.description && t.description.toLowerCase().includes(filterText))
+            );
+          }
+          
+          if (filterCategory && filterCategory !== 'all') {
+            displayTransactions = displayTransactions.filter(t => t.category === filterCategory);
+          }
+          
+          if (filterType && filterType !== 'all') {
+            displayTransactions = displayTransactions.filter(t => t.type === filterType);
+          }
+          
+          if (filterStartDate) {
+            const startDate = new Date(filterStartDate);
+            displayTransactions = displayTransactions.filter(t => new Date(t.date) >= startDate);
+          }
+          
+          if (filterEndDate) {
+            const endDate = new Date(filterEndDate);
+            endDate.setHours(23, 59, 59, 999); // End of the day
+            displayTransactions = displayTransactions.filter(t => new Date(t.date) <= endDate);
+          }
+        }
+        
+        // Sort transactions
+        displayTransactions = sortTransactions(displayTransactions);
+        
+        // Update transaction count
+        transactionCount.textContent = `${new Intl.NumberFormat('fa-IR').format(displayTransactions.length)} تراکنش`;
+        
+        // Show/hide empty message
+        if (displayTransactions.length === 0) {
+          transactionList.classList.add('hidden');
+          emptyMessage.classList.remove('hidden');
+          return;
+        } else {
+          transactionList.classList.remove('hidden');
+          emptyMessage.classList.add('hidden');
+        }
+        
+        // Clear list
+        transactionList.innerHTML = '';
+        
+        // Add transactions
+        displayTransactions.forEach(transaction => {
+          const transactionElement = document.createElement('div');
+          transactionElement.className = 'transaction-card bg-white dark:bg-gray-800 p-4 rounded-2xl';
+          transactionElement.dataset.id = transaction.id;
+          
+          const iconClass = transaction.type === 'income' 
+            ? 'ri-arrow-left-down-line text-success-600' 
+            : 'ri-arrow-right-up-line text-danger-600';
+            
+          const bgClass = transaction.type === 'income'
+            ? 'bg-success-100 dark:bg-success-900'
+            : 'bg-danger-100 dark:bg-danger-900';
+            
+          const badgeClass = transaction.type === 'income'
+            ? 'bg-success-50 text-success-700 dark:bg-success-900 dark:text-success-300'
+            : 'bg-danger-50 text-danger-700 dark:bg-danger-900 dark:text-danger-300';
+            
+          const typeText = transaction.type === 'income' ? 'درآمد' : 'هزینه';
+          const typeIcon = transaction.type === 'income' ? 'ri-arrow-left-down-line' : 'ri-arrow-right-up-line';
+          
+          const amountClass = transaction.type === 'income'
+            ? 'text-success-500'
+            : 'text-danger-500';
+            
+          const amountPrefix = transaction.type === 'income' ? '+' : '-';
+          
+          // Translate category
+          const categoryTranslations = {
+            'personal': 'شخصی',
+            'work': 'کاری',
+            'food': 'خوراک',
+            'transport': 'حمل و نقل',
+            'bills': 'قبوض',
+            'entertainment': 'تفریح',
+            'other': 'سایر'
+          };
+          
+          const translatedCategory = categoryTranslations[transaction.category] || transaction.category;
+          
+          transactionElement.innerHTML = `
+            <div class="flex justify-between items-start">
+              <div class="flex items-start">
+                <div class="w-12 h-12 rounded-xl ${bgClass} flex items-center justify-center ml-3">
+                  <i class="${iconClass} text-2xl"></i>
+                </div>
+                <div>
+                  <h3 class="font-bold text-lg">${transaction.title}</h3>
+                  <div class="flex items-center text-sm text-gray-500 dark:text-gray-400 mt-1">
+                    <span class="badge ${badgeClass} flex items-center text-xs px-2 py-1 rounded-full ml-2">
+                      <i class="${typeIcon} ml-1"></i> ${typeText}
+                    </span>
+                    <span>${translatedCategory}</span>
+                    <span class="mx-2">•</span>
+                    <span>${formatDate(new Date(transaction.date))}</span>
+                  </div>
+                  ${transaction.description ? `<p class="text-sm text-gray-600 dark:text-gray-400 mt-2">${transaction.description}</p>` : ''}
+                </div>
+              </div>
+              <div class="text-lg font-bold ${amountClass}">
+                ${amountPrefix}${new Intl.NumberFormat('fa-IR').format(transaction.amount)} تومان
+              </div>
+            </div>
+            <div class="flex justify-end mt-3 pt-3 border-t border-gray-100 dark:border-gray-700 text-sm">
+              <button class="text-primary-600 hover:text-primary-700 flex items-center ml-4" onclick="showReceipt(${transaction.id})">
+                <i class="ri-bill-line ml-1"></i> رسید
+              </button>
+              <button class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 flex items-center ml-4" onclick="editTransaction(${transaction.id})">
+                <i class="ri-edit-line ml-1"></i> ویرایش
+              </button>
+              <button class="text-danger-500 hover:text-danger-700 flex items-center" onclick="deleteTransaction(${transaction.id})">
+                <i class="ri-delete-bin-line ml-1"></i> حذف
+              </button>
+            </div>
+          `;
+          
+          transactionList.appendChild(transactionElement);
+        });
+      }
+      
+      // Sort transactions
+      function sortTransactions(transactionsToSort) {
+        return transactionsToSort.sort((a, b) => {
+          if (currentSort.field === 'date') {
+            const dateA = new Date(a.date);
+            const dateB = new Date(b.date);
+            return currentSort.order === 'desc' ? dateB - dateA : dateA - dateB;
+          } else if (currentSort.field === 'amount') {
+            return currentSort.order === 'desc' ? b.amount - a.amount : a.amount - b.amount;
+          } else if (currentSort.field === 'title') {
+            return currentSort.order === 'desc'
+              ? b.title.localeCompare(a.title, 'fa')
+              : a.title.localeCompare(b.title, 'fa');
+          }
+          return 0;
+        });
+      }
+      
+      // Update contacts list
+      function updateContactsList(filtered = false) {
+        const contactsList = document.getElementById('contactsList');
+        const emptyContactsMessage = document.getElementById('emptyContactsMessage');
+        const contactsCount = document.getElementById('contactsCount');
+        
+        if (!contactsList || !emptyContactsMessage || !contactsCount) return;
+        
+        // Filter contacts if necessary
+        let displayContacts = [...contacts];
+        
+        if (filtered) {
+          const searchText = document.getElementById('searchContact').value.toLowerCase();
+          const filterContactBalance = document.getElementById('filterContactBalance').value;
+          
+          if (searchText) {
+            displayContacts = displayContacts.filter(c => 
+              c.name.toLowerCase().includes(searchText) || 
+              (c.phone && c.phone.toLowerCase().includes(searchText)) ||
+              (c.description && c.description.toLowerCase().includes(searchText))
+            );
+          }
+          
+          if (filterContactBalance && filterContactBalance !== 'all') {
+            displayContacts = displayContacts.filter(contact => {
+              const contactTransactionsForThisContact = contactTransactions.filter(t => t.contactId === contact.id);
+              
+              const receivable = contactTransactionsForThisContact
+                .filter(t => t.type === 'payable' || t.type === 'deposit_return' || t.type === 'loan_return')
+                .reduce((sum, t) => sum + t.amount, 0);
+                
+              const payable = contactTransactionsForThisContact
+                .filter(t => t.type === 'receivable' || t.type === 'deposit' || t.type === 'loan')
+                .reduce((sum, t) => sum + t.amount, 0);
+                
+              const balance = receivable - payable;
+              
+              switch(filterContactBalance) {
+                case 'receivable':
+                  return balance > 0;
+                case 'payable':
+                  return balance < 0;
+                case 'deposit':
+                  return contactTransactionsForThisContact.some(t => t.type === 'deposit');
+                case 'loan':
+                  return contactTransactionsForThisContact.some(t => t.type === 'loan');
+                case 'settled':
+                  return balance === 0 && contactTransactionsForThisContact.length > 0;
+                default:
+                  return true;
+              }
+            });
+          }
+        }
+        
+        // Update contacts count
+        contactsCount.textContent = `${new Intl.NumberFormat('fa-IR').format(displayContacts.length)} نفر`;
+        
+        // Show/hide empty message
+        if (displayContacts.length === 0) {
+          contactsList.classList.add('hidden');
+          emptyContactsMessage.classList.remove('hidden');
+          return;
+        } else {
+          contactsList.classList.remove('hidden');
+          emptyContactsMessage.classList.add('hidden');
+        }
+        
+        // Clear list
+        contactsList.innerHTML = '';
+        
+        // Add contacts
+        displayContacts.forEach(contact => {
+          // Calculate balance for this contact
+          const contactTransactionsForThisContact = contactTransactions.filter(t => t.contactId === contact.id);
+          
+          const receivable = contactTransactionsForThisContact
+            .filter(t => t.type === 'payable' || t.type === 'deposit_return' || t.type === 'loan_return')
+            .reduce((sum, t) => sum + t.amount, 0);
+            
+          const payable = contactTransactionsForThisContact
+            .filter(t => t.type === 'receivable' || t.type === 'deposit' || t.type === 'loan')
+            .reduce((sum, t) => sum + t.amount, 0);
+            
+          const balance = receivable - payable;
+          
+          // Get last transaction date
+          let lastTransactionDate = null;
+          if (contactTransactionsForThisContact.length > 0) {
+            lastTransactionDate = new Date(Math.max(
+              ...contactTransactionsForThisContact.map(t => new Date(t.date).getTime())
+            ));
+          }
+          
+          const contactElement = document.createElement('div');
+          contactElement.className = 'bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-sm';
+          
+          // Determine border color based on balance
+          if (balance > 0) {
+            contactElement.classList.add('border-r-4', 'border-success-500');
+          } else if (balance < 0) {
+            contactElement.classList.add('border-r-4', 'border-danger-500');
+          } else if (contactTransactionsForThisContact.length > 0) {
+            contactElement.classList.add('border-r-4', 'border-gray-400');
+          }
+          
+          // Calculate avatar background color based on name
+          const colors = [
+            'bg-primary-500',
+            'bg-success-500',
+            'bg-danger-500',
+            'bg-warning-500',
+            'bg-info-500',
+            'bg-purple-500',
+            'bg-pink-500',
+            'bg-blue-500'
+          ];
+          
+          const nameHash = contact.name.split('').reduce((acc, char) => {
+            return acc + char.charCodeAt(0);
+          }, 0);
+          
+          const avatarBgClass = colors[nameHash % colors.length];
+          
+          // Format balance text
+          let balanceText = '';
+          let balanceClass = '';
+          
+          if (balance > 0) {
+            balanceText = `${formatAmount(balance)} طلب شما`;
+            balanceClass = 'text-success-500';
+          } else if (balance < 0) {
+            balanceText = `${formatAmount(Math.abs(balance))} بدهی شما`;
+            balanceClass = 'text-danger-500';
+          } else if (contactTransactionsForThisContact.length > 0) {
+            balanceText = 'تسویه شده';
+            balanceClass = 'text-gray-500';
+          } else {
+            balanceText = 'بدون تراکنش';
+            balanceClass = 'text-gray-500';
+          }
+          
+          // Calculate percentage for progress bar
+          let progressPercent = 0;
+          if (balance !== 0) {
+            const total = receivable + payable;
+            if (balance > 0) {
+              progressPercent = (receivable / total) * 100;
+            } else {
+              progressPercent = (payable / total) * 100;
+            }
+          }
+          
+          const progressBarClass = balance > 0 ? 'bg-success-500' : 'bg-danger-500';
+          
+          contactElement.innerHTML = `
+            <div class="flex justify-between items-start mb-3">
+              <div class="flex items-center">
+                <div class="contact-avatar ${avatarBgClass} mr-3">
+                  ${contact.name.charAt(0)}
+                </div>
+                <div>
+                  <h3 class="text-lg font-semibold">${contact.name}</h3>
+                  <p class="text-sm text-gray-500 dark:text-gray-400">${contact.phone || ''}</p>
+                </div>
+              </div>
+              <div class="${balanceClass} font-medium text-sm">
+                ${balanceText}
+              </div>
+            </div>
+            <div class="h-2 bg-gray-200 dark:bg-gray-700 rounded-full mb-3">
+              <div class="h-2 ${progressBarClass} rounded-full" style="width: ${progressPercent}%"></div>
+            </div>
+            <div class="flex justify-between items-center text-xs text-gray-500 dark:text-gray-400 mt-2 mb-3">
+              <div class="flex items-center">
+                <i class="ri-history-line ml-1"></i>
+                <span>${contactTransactionsForThisContact.length} تراکنش</span>
+              </div>
+              <div class="flex items-center">
+                <i class="ri-calendar-line ml-1"></i>
+                <span>آخرین: ${lastTransactionDate ? formatDate(lastTransactionDate) : 'ندارد'}</span>
+              </div>
+            </div>
+            <button class="view-contact-details w-full mt-2 py-2 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg transition-all flex items-center justify-center font-medium" data-id="${contact.id}">
+              <i class="ri-eye-line ml-2"></i> مشاهده جزئیات
+            </button>
+          `;
+          
+          contactsList.appendChild(contactElement);
+        });
+        
+        // Add event listeners for view details buttons
+        document.querySelectorAll('.view-contact-details').forEach(button => {
+          button.addEventListener('click', function() {
+            const contactId = parseInt(this.getAttribute('data-id'));
+            viewContactDetails(contactId);
+          });
+        });
+      }
+      
+      // View contact details
+      function viewContactDetails(contactId) {
+        currentViewingContactId = contactId;
+        navigateToPage('contact-details-page');
+        
+        // Find the contact
+        const contact = contacts.find(c => c.id === contactId);
+        if (!contact) return;
+        
+        // Update contact details in UI
+        document.getElementById('contactDetailsName').textContent = contact.name;
+        document.getElementById('contactDetailsPhone').textContent = contact.phone || '';
+        
+        // Calculate avatar background
+        const colors = [
+          'bg-primary-500',
+          'bg-success-500',
+          'bg-danger-500',
+          'bg-warning-500',
+          'bg-info-500',
+          'bg-purple-500',
+          'bg-pink-500',
+          'bg-blue-500'
+        ];
+        
+        const nameHash = contact.name.split('').reduce((acc, char) => {
+          return acc + char.charCodeAt(0);
+        }, 0);
+        
+        const avatarBgClass = colors[nameHash % colors.length];
+        
+        const contactAvatarBig = document.getElementById('contactAvatarBig');
+        contactAvatarBig.className = `w-12 h-12 rounded-full ${avatarBgClass} text-white flex items-center justify-center text-xl font-bold mr-3`;
+        contactAvatarBig.textContent = contact.name.charAt(0);
+        
+        // Get transactions for this contact
+        const contactTransactionsForThisContact = contactTransactions.filter(t => t.contactId === contactId);
+        
+        // Calculate balance
+        const receivable = contactTransactionsForThisContact
+          .filter(t => t.type === 'payable' || t.type === 'deposit_return' || t.type === 'loan_return')
+          .reduce((sum, t) => sum + t.amount, 0);
+          
+        const payable = contactTransactionsForThisContact
+          .filter(t => t.type === 'receivable' || t.type === 'deposit' || t.type === 'loan')
+          .reduce((sum, t) => sum + t.amount, 0);
+          
+        const balance = receivable - payable;
+        
+        // Format balance text
+        let balanceText = '';
+        if (balance > 0) {
+          balanceText = `${formatAmount(balance)} طلب شما`;
+        } else if (balance < 0) {
+          balanceText = `${formatAmount(Math.abs(balance))} بدهی شما`;
+        } else if (contactTransactionsForThisContact.length > 0) {
+          balanceText = 'تسویه شده';
+        } else {
+          balanceText = 'بدون تراکنش';
+        }
+        
+        document.getElementById('contactDetailsBalance').textContent = balanceText;
+        
+        // Update last transaction
+        let lastTransactionDate = null;
+        let lastTransactionAmount = null;
+        
+        if (contactTransactionsForThisContact.length > 0) {
+          const sortedTransactions = [...contactTransactionsForThisContact].sort((a, b) => new Date(b.date) - new Date(a.date));
+          const lastTransaction = sortedTransactions[0];
+          lastTransactionDate = new Date(lastTransaction.date);
+          lastTransactionAmount = lastTransaction.amount;
+          
+          document.getElementById('contactDetailsLastTransaction').textContent = 
+            `${formatDate(lastTransactionDate)} - ${formatAmount(lastTransactionAmount)}`;
+        } else {
+          document.getElementById('contactDetailsLastTransaction').textContent = '-';
+        }
+        
+        // Update transaction count
+        document.getElementById('contactTransactionsCount').textContent = 
+          `${new Intl.NumberFormat('fa-IR').format(contactTransactionsForThisContact.length)} تراکنش`;
+        
+        // Update transactions list
+        updateContactTransactionsList(contactId);
+        
+        // Update timeline
+        updateContactTimeline(contactId);
+        
+        // Update chart
+        updateContactTransactionChart(contactId);
+        
+        // Add event listener for "New Transaction" button
+        document.getElementById('addNewContactTransactionBtn')?.addEventListener('click', function() {
+          openContactTransactionModal(contactId);
+        });
+      }
+      
+      // Update contact transactions list
+      function updateContactTransactionsList(contactId) {
+        const contactTransactionsList = document.getElementById('contactTransactionsList');
+        const emptyContactTransactionsMessage = document.getElementById('emptyContactTransactionsMessage');
+        
+        if (!contactTransactionsList || !emptyContactTransactionsMessage) return;
+        
+        // Get transactions for this contact
+        const contactTransactionsForThisContact = contactTransactions.filter(t => t.contactId === contactId);
+        
+        // Sort by date (newest first)
+        contactTransactionsForThisContact.sort((a, b) => new Date(b.date) - new Date(a.date));
+        
+        // Show/hide empty message
+        if (contactTransactionsForThisContact.length === 0) {
+          contactTransactionsList.classList.add('hidden');
+          emptyContactTransactionsMessage.classList.remove('hidden');
+          return;
+        } else {
+          contactTransactionsList.classList.remove('hidden');
+          emptyContactTransactionsMessage.classList.add('hidden');
+        }
+        
+        // Clear list
+        contactTransactionsList.innerHTML = '';
+        
+        // Add transactions
+        contactTransactionsForThisContact.forEach(transaction => {
+          const transactionElement = document.createElement('div');
+          transactionElement.className = 'transaction-card bg-white dark:bg-gray-700 p-4 rounded-xl';
+          
+          // Determine transaction icon and text based on type
+          let iconClass = '';
+          let typeClass = '';
+          let typeText = '';
+          let amountClass = '';
+          
+          switch(transaction.type) {
+            case 'receivable':
+              iconClass = 'ri-arrow-right-circle-line text-danger-600';
+              typeClass = 'bg-danger-50 text-danger-700 dark:bg-danger-900 dark:text-danger-300';
+              typeText = 'پرداخت به طرف حساب';
+              amountClass = 'text-danger-500';
+              break;
+            case 'payable':
+              iconClass = 'ri-arrow-left-circle-line text-success-600';
+              typeClass = 'bg-success-50 text-success-700 dark:bg-success-900 dark:text-success-300';
+              typeText = 'دریافت از طرف حساب';
+              amountClass = 'text-success-500';
+              break;
+            case 'deposit':
+              iconClass = 'ri-arrow-left-circle-line text-warning-600';
+              typeClass = 'bg-warning-50 text-warning-700 dark:bg-warning-900 dark:text-warning-300';
+              typeText = 'امانت دریافتی';
+              amountClass = 'text-danger-500';
+              break;
+            case 'loan':
+              iconClass = 'ri-bank-card-line text-warning-600';
+              typeClass = 'bg-warning-50 text-warning-700 dark:bg-warning-900 dark:text-warning-300';
+              typeText = 'قرض‌الحسنه دریافتی';
+              amountClass = 'text-danger-500';
+              break;
+            case 'deposit_return':
+              iconClass = 'ri-arrow-right-circle-line text-info-600';
+              typeClass = 'bg-info-50 text-info-700 dark:bg-info-900 dark:text-info-300';
+              typeText = 'بازپرداخت امانت';
+              amountClass = 'text-success-500';
+              break;
+            case 'loan_return':
+              iconClass = 'ri-bank-card-line text-info-600';
+              typeClass = 'bg-info-50 text-info-700 dark:bg-info-900 dark:text-info-300';
+              typeText = 'بازپرداخت قرض‌الحسنه';
+              amountClass = 'text-success-500';
+              break;
+          }
+          
+          transactionElement.innerHTML = `
+            <div class="flex justify-between items-start">
+              <div>
+                <div class="flex items-center">
+                  <div class="w-10 h-10 rounded-full bg-${transaction.type === 'receivable' || transaction.type === 'deposit' || transaction.type === 'loan' ? 'danger' : 'success'}-100 dark:bg-${transaction.type === 'receivable' || transaction.type === 'deposit' || transaction.type === 'loan' ? 'danger' : 'success'}-900 flex items-center justify-center ml-3">
+                    <i class="${iconClass} text-xl"></i>
+                  </div>
+                  <h3 class="font-bold text-lg">${transaction.title}</h3>
+                </div>
+                <div class="flex items-center text-sm text-gray-500 dark:text-gray-400 mt-2">
+                  <span class="badge ${typeClass} flex items-center text-xs px-2 py-1 rounded-full ml-2">
+                    <i class="${iconClass.split(' ')[0]} ml-1"></i> ${typeText}
+                  </span>
+                  <span>${formatDate(new Date(transaction.date))}</span>
+                </div>
+                ${transaction.description ? `<p class="text-sm text-gray-600 dark:text-gray-400 mt-2">${transaction.description}</p>` : ''}
+              </div>
+              <div class="text-lg font-bold ${amountClass}">
+                ${formatAmount(transaction.amount)}
+              </div>
+            </div>
+            <div class="flex justify-end mt-3 pt-3 border-t border-gray-100 dark:border-gray-700 text-sm">
+              <button class="text-primary-600 hover:text-primary-700 flex items-center ml-4" onclick="showContactTransactionReceipt(${transaction.id})">
+                <i class="ri-bill-line ml-1"></i> رسید
+              </button>
+              <button class="edit-contact-transaction text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 flex items-center ml-4" data-id="${transaction.id}">
+                <i class="ri-edit-line ml-1"></i> ویرایش
+              </button>
+              <button class="text-danger-500 hover:text-danger-700 flex items-center" onclick="deleteContactTransaction(${transaction.id})">
+                <i class="ri-delete-bin-line ml-1"></i> حذف
+              </button>
+            </div>
+          `;
+          
+          contactTransactionsList.appendChild(transactionElement);
+        });
+        
+        // Add event listeners for edit buttons
+        document.querySelectorAll('.edit-contact-transaction').forEach(button => {
+          button.addEventListener('click', function() {
+            const id = parseInt(this.getAttribute('data-id'));
+            editContactTransaction(id);
+          });
+        });
+      }
+      
+      // Update contact timeline
+      function updateContactTimeline(contactId) {
+        const timelineContainer = document.getElementById('transactionTimeline');
+        if (!timelineContainer) return;
+        
+        timelineContainer.innerHTML = '';
+        
+        // Get transactions for this contact
+        const contactTransactionsForThisContact = contactTransactions.filter(t => t.contactId === contactId);
+        
+        if (contactTransactionsForThisContact.length === 0) {
+          timelineContainer.innerHTML = `
+            <div class="text-center py-6">
+              <p class="text-gray-500 dark:text-gray-400">هیچ تراکنشی با این طرف حساب ثبت نشده است.</p>
+            </div>
+          `;
+          return;
+        }
+        
+        // Sort by date (oldest first)
+        contactTransactionsForThisContact.sort((a, b) => new Date(a.date) - new Date(b.date));
+        
+        // Calculate running balance for each transaction
+        let runningBalance = 0;
+        
+        contactTransactionsForThisContact.forEach(transaction => {
+          if (transaction.type === 'payable' || transaction.type === 'deposit_return' || transaction.type === 'loan_return') {
+            runningBalance += transaction.amount; // Increases my receivables
+          } else if (transaction.type === 'receivable' || transaction.type === 'deposit' || transaction.type === 'loan') {
+            runningBalance -= transaction.amount; // Increases my payables
+          }
+          
+          transaction.runningBalance = runningBalance;
+        });
+        
+        // Reverse to show newest first
+        contactTransactionsForThisContact.reverse();
+        
+        // Create timeline items
+        contactTransactionsForThisContact.forEach(transaction => {
+          // Determine transaction type text
+          let typeText = '';
+          let typeClass = '';
+          
+          switch(transaction.type) {
+            case 'receivable':
+              typeText = 'پرداخت به طرف حساب';
+              typeClass = 'text-danger-500';
+              break;
+            case 'payable':
+              typeText = 'دریافت از طرف حساب';
+              typeClass = 'text-success-500';
+              break;
+            case 'deposit':
+              typeText = 'امانت دریافتی';
+              typeClass = 'text-warning-500';
+              break;
+            case 'loan':
+              typeText = 'قرض‌الحسنه دریافتی';
+              typeClass = 'text-warning-500';
+              break;
+            case 'deposit_return':
+              typeText = 'بازپرداخت امانت';
+              typeClass = 'text-info-500';
+              break;
+            case 'loan_return':
+              typeText = 'بازپرداخت قرض‌الحسنه';
+              typeClass = 'text-info-500';
+              break;
+          }
+          
+          // Format balance text
+          let balanceText = '';
+          let balanceClass = '';
+          
+          if (transaction.runningBalance > 0) {
+            balanceText = `${formatAmount(transaction.runningBalance)} طلب شما`;
+            balanceClass = 'text-success-500';
+          } else if (transaction.runningBalance < 0) {
+            balanceText = `${formatAmount(Math.abs(transaction.runningBalance))} بدهی شما`;
+            balanceClass = 'text-danger-500';
+          } else {
+            balanceText = 'تسویه شده';
+            balanceClass = 'text-gray-500';
+          }
+          
+          // Create timeline item
+          const timelineItem = document.createElement('div');
+          timelineItem.className = 'timeline-item';
+          
+          timelineItem.innerHTML = `
+            <div class="timeline-dot"></div>
+            <div class="bg-white dark:bg-gray-700 p-4 rounded-lg shadow-sm">
+              <div class="flex justify-between items-center mb-2">
+                <div class="text-sm text-gray-500 dark:text-gray-400">${formatDate(new Date(transaction.date))}</div>
+                <div class="${typeClass} font-medium">${typeText}</div>
+              </div>
+              <div class="text-lg font-semibold mb-2">${transaction.title}</div>
+              <div class="text-2xl font-bold ${transaction.type === 'receivable' || transaction.type === 'deposit' || transaction.type === 'loan' ? 'text-danger-500' : 'text-success-500'} mb-2">
+                ${formatAmount(transaction.amount)}
+              </div>
+              <div class="text-sm font-medium mt-3 pt-2 border-t dark:border-gray-600 flex justify-between">
+                <span>مانده حساب:</span>
+                <span class="${balanceClass}">${balanceText}</span>
+              </div>
+            </div>
+          `;
+          
+          timelineContainer.appendChild(timelineItem);
+        });
+      }
+      
+      // Update contact transaction chart
+      function updateContactTransactionChart(contactId) {
+        const chartContainer = document.getElementById('contactTransactionChart');
+        if (!chartContainer) return;
+        
+        // Get transactions for this contact
+        const contactTransactionsForThisContact = contactTransactions.filter(t => t.contactId === contactId);
+        
+        if (contactTransactionsForThisContact.length === 0) {
+          return;
+        }
+        
+        // Sort by date
+        contactTransactionsForThisContact.sort((a, b) => new Date(a.date) - new Date(b.date));
+        
+        // Calculate running balance for each transaction
+        let runningBalance = 0;
+        const balanceHistory = [];
+        const labels = [];
+        
+        contactTransactionsForThisContact.forEach(transaction => {
+          if (transaction.type === 'payable' || transaction.type === 'deposit_return' || transaction.type === 'loan_return') {
+            runningBalance += transaction.amount; // Increases my receivables
+          } else if (transaction.type === 'receivable' || transaction.type === 'deposit' || transaction.type === 'loan') {
+            runningBalance -= transaction.amount; // Increases my payables
+          }
+          
+          balanceHistory.push(runningBalance);
+          labels.push(formatDate(new Date(transaction.date)));
+        });
+        
+        // Destroy previous chart if it exists
+        if (contactTransactionChart) {
+          contactTransactionChart.destroy();
+        }
+        
+        // Create chart
+        const ctx = chartContainer.getContext('2d');
+        contactTransactionChart = new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: labels,
+            datasets: [
+              {
+                label: 'مانده حساب',
+                data: balanceHistory,
+                borderColor: '#4F46E5',
+                backgroundColor: 'rgba(79, 70, 229, 0.1)',
+                fill: true,
+                tension: 0.4,
+                borderWidth: 3,
+                pointRadius: 4,
+                pointBackgroundColor: '#4F46E5'
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                position: 'top',
+                labels: {
+                  font: {
+                    family: 'Vazirmatn',
+                    size: 12
+                  },
+                  color: document.documentElement.classList.contains('dark') ? '#E5E7EB' : '#111827'
+                }
+              }
+            },
+            scales: {
+              x: {
+                ticks: {
+                  font: {
+                    family: 'Vazirmatn',
+                    size: 12
+                  },
+                  color: document.documentElement.classList.contains('dark') ? '#E5E7EB' : '#111827'
+                },
+                grid: {
+                  display: false
+                }
+              },
+              y: {
+                ticks: {
+                  font: {
+                    family: 'Vazirmatn',
+                    size: 12
+                  },
+                  color: document.documentElement.classList.contains('dark') ? '#E5E7EB' : '#111827',
+                  callback: function(value) {
+                    return new Intl.NumberFormat('fa-IR', { notation: 'compact', compactDisplay: 'short' }).format(value);
+                  }
+                },
+                grid: {
+                  color: document.documentElement.classList.contains('dark') ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.05)'
+                }
+              }
+            }
+          }
+        });
+      }
+      
+      // Update category chart
+      function updateCategoryChart() {
+        const chartContainer = document.getElementById('categoryChart');
+        if (!chartContainer) return;
+        
+        // If there are no transactions yet
+        if (transactions.length === 0) {
+          return;
+        }
+        
+        // Get expense transactions
+        const expenseTransactions = transactions.filter(t => t.type === 'expense');
+        
+        // Group by category
+        const categoryData = {};
+        const categoryColors = {
+          'personal': '#3B82F6', // آبی
+          'work': '#8B5CF6', // بنفش
+          'food': '#EC4899', // صورتی
+          'transport': '#F59E0B', // نارنجی
+          'bills': '#10B981', // سبز
+          'entertainment': '#6366F1', // ایندیگو
+          'other': '#6B7280'  // خاکستری
+        };
+        
+        // Calculate total for each category
+        expenseTransactions.forEach(transaction => {
+          if (!categoryData[transaction.category]) {
+            categoryData[transaction.category] = 0;
+          }
+          categoryData[transaction.category] += transaction.amount;
+        });
+        
+        // Prepare data for chart
+        const labels = [];
+        const data = [];
+        const backgroundColor = [];
+        
+        for (const category in categoryData) {
+          labels.push(getCategoryName(category));
+          data.push(categoryData[category]);
+          backgroundColor.push(categoryColors[category] || '#6B7280');
+        }
+        
+        // Create or update chart
+        if (window.categoryChart) {
+          window.categoryChart.data.labels = labels;
+          window.categoryChart.data.datasets[0].data = data;
+          window.categoryChart.data.datasets[0].backgroundColor = backgroundColor;
+          window.categoryChart.update();
+        } else {
+          const ctx = chartContainer.getContext('2d');
+          window.categoryChart = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+              labels: labels,
+              datasets: [{
+                data: data,
+                backgroundColor: backgroundColor,
+                borderWidth: 0,
+                hoverOffset: 10
+              }]
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              cutout: '70%',
+              plugins: {
+                legend: {
+                  position: 'bottom',
+                  labels: {
+                    font: {
+                      family: 'Vazirmatn',
+                      size: 12
+                    },
+                    padding: 20,
+                    color: document.documentElement.classList.contains('dark') ? '#E5E7EB' : '#111827',
+                    usePointStyle: true,
+                    pointStyle: 'circle'
+                  }
+                },
+                tooltip: {
+                  backgroundColor: document.documentElement.classList.contains('dark') ? '#374151' : 'white',
+                  titleColor: document.documentElement.classList.contains('dark') ? '#E5E7EB' : '#111827',
+                  bodyColor: document.documentElement.classList.contains('dark') ? '#E5E7EB' : '#111827',
+                  callbacks: {
+                    label: function(context) {
+                      const value = context.raw;
+                      const total = context.dataset.data.reduce((acc, val) => acc + val, 0);
+                      const percentage = total ? Math.round((value / total) * 100) : 0;
+                      return `${context.label}: ${percentage}%`;
+                    }
+                  }
+                }
+              },
+              animations: {
+                animateRotate: true,
+                animateScale: true
+              }
+            }
+          });
+        }
+      }
+      
+      // Translate category name
+      function getCategoryName(category) {
+        const translations = {
+          'personal': 'شخصی',
+          'work': 'کاری',
+          'food': 'خوراک',
+          'transport': 'حمل و نقل',
+          'bills': 'قبوض',
+          'entertainment': 'تفریح',
+          'other': 'سایر'
+        };
+        
+        return translations[category] || category;
+      }
+      
+      // Open transaction modal for adding new transaction
+      function openTransactionModal(transactionId = null) {
+        const modal = document.getElementById('addTransactionModal');
+        const form = document.getElementById('transactionForm');
+        const modalTitle = document.getElementById('transactionModalTitle');
+        const submitBtn = document.getElementById('transactionSubmitBtn');
+        const editTransactionIdField = document.getElementById('editTransactionId');
+        
+        // Reset form
+        form.reset();
+        
+        // Set default date and time
+        const now = new Date();
+        const formattedDate = now.toISOString().split('T')[0];
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        
+        document.getElementById('date').value = formattedDate;
+        document.getElementById('time').value = `${hours}:${minutes}`;
+        
+        // Reset transaction type
+        document.getElementById('type').value = 'income';
+        document.getElementById('type-income').checked = true;
+        document.getElementById('type-expense').checked = false;
+        document.getElementById('type-income-label').classList.add('bg-success-100', 'dark:bg-success-900', 'text-success-700', 'dark:text-success-300');
+        document.getElementById('type-expense-label').classList.remove('bg-danger-100', 'dark:bg-danger-900', 'text-danger-700', 'dark:text-danger-300');
+        
+        if (transactionId) {
+          // Edit existing transaction
+          const transaction = transactions.find(t => t.id === transactionId);
+          if (!transaction) return;
+          
+          modalTitle.textContent = 'ویرایش تراکنش';
+          submitBtn.textContent = 'ذخیره تغییرات';
+          editTransactionIdField.value = transactionId;
+          
+          // Fill form with transaction data
+          document.getElementById('title').value = transaction.title;
+          document.getElementById('amount').value = transaction.amount;
+          document.getElementById('category').value = transaction.category;
+          document.getElementById('description').value = transaction.description || '';
+          
+          // Set type
+          document.getElementById('type').value = transaction.type;
+          
+          if (transaction.type === 'income') {
+            document.getElementById('type-income').checked = true;
+            document.getElementById('type-expense').checked = false;
+            document.getElementById('type-income-label').classList.add('bg-success-100', 'dark:bg-success-900', 'text-success-700', 'dark:text-success-300');
+            document.getElementById('type-expense-label').classList.remove('bg-danger-100', 'dark:bg-danger-900', 'text-danger-700', 'dark:text-danger-300');
+          } else {
+            document.getElementById('type-income').checked = false;
+            document.getElementById('type-expense').checked = true;
+            document.getElementById('type-expense-label').classList.add('bg-danger-100', 'dark:bg-danger-900', 'text-danger-700', 'dark:text-danger-300');
+            document.getElementById('type-income-label').classList.remove('bg-success-100', 'dark:bg-success-900', 'text-success-700', 'dark:text-success-300');
+          }
+          
+          // Set date and time
+          const transactionDate = new Date(transaction.date);
+          const year = transactionDate.getFullYear();
+          const month = String(transactionDate.getMonth() + 1).padStart(2, '0');
+          const day = String(transactionDate.getDate()).padStart(2, '0');
+          const hour = String(transactionDate.getHours()).padStart(2, '0');
+          const minute = String(transactionDate.getMinutes()).padStart(2, '0');
+          
+          document.getElementById('date').value = `${year}-${month}-${day}`;
+          document.getElementById('time').value = `${hour}:${minute}`;
+        } else {
+          // Add new transaction
+          modalTitle.textContent = 'ثبت تراکنش جدید';
+          submitBtn.textContent = 'ثبت تراکنش';
+          editTransactionIdField.value = '';
+        }
+        
+        modal.classList.remove('hidden');
+      }
+      
+      // Open contact transaction modal
+      function openContactTransactionModal(contactId, transactionId = null) {
+        const modal = document.getElementById('addContactTransactionModal');
+        const form = document.getElementById('contactTransactionForm');
+        const modalTitle = document.getElementById('contactTransactionModalTitle');
+        const submitBtn = document.getElementById('contactTransactionSubmitBtn');
+        const editContactTransactionIdField = document.getElementById('editContactTransactionId');
+        
+        // Reset form
+        form.reset();
+        
+        // Set contact ID
+        document.getElementById('contactId').value = contactId;
+        
+        // Set default date
+        const now = new Date();
+        const formattedDate = now.toISOString().split('T')[0];
+        document.getElementById('transactionDate').value = formattedDate;
+        
+        if (transactionId) {
+          // Edit existing transaction
+          const transaction = contactTransactions.find(t => t.id === transactionId);
+          if (!transaction) return;
+          
+          modalTitle.textContent = 'ویرایش تراکنش';
+          submitBtn.textContent = 'ذخیره تغییرات';
+          editContactTransactionIdField.value = transactionId;
+          
+          // Fill form with transaction data
+          document.getElementById('transactionTitle').value = transaction.title;
+          document.getElementById('transactionAmount').value = transaction.amount;
+          document.getElementById('transactionType').value = transaction.type;
+          document.getElementById('transactionDescription').value = transaction.description || '';
+          
+          // Set date
+          const transactionDate = new Date(transaction.date);
+          const year = transactionDate.getFullYear();
+          const month = String(transactionDate.getMonth() + 1).padStart(2, '0');
+          const day = String(transactionDate.getDate()).padStart(2, '0');
+          
+          document.getElementById('transactionDate').value = `${year}-${month}-${day}`;
+        } else {
+          // Add new transaction
+          modalTitle.textContent = 'ثبت تراکنش جدید';
+          submitBtn.textContent = 'ثبت تراکنش';
+          editContactTransactionIdField.value = '';
+        }
+        
+        modal.classList.remove('hidden');
+      }
+      
+      // Edit transaction
+      window.editTransaction = function(id) {
+        openTransactionModal(id);
+      };
+      
+      // Edit contact transaction
+      function editContactTransaction(id) {
+        const transaction = contactTransactions.find(t => t.id === id);
+        if (!transaction) return;
+        
+        openContactTransactionModal(transaction.contactId, id);
+      }
+      
+      // Delete transaction
+      window.deleteTransaction = function(id) {
+        document.getElementById('deleteModal').classList.remove('hidden');
+        deleteTransactionId = id;
+        deleteContactTransactionId = null;
+      };
+      
+      // Delete contact transaction
+      window.deleteContactTransaction = function(id) {
+        document.getElementById('deleteModal').classList.remove('hidden');
+        deleteTransactionId = null;
+        deleteContactTransactionId = id;
+      };
+      
+      // Show receipt
+      window.showReceipt = function(id) {
+        const transaction = transactions.find(t => t.id === id);
+        if (!transaction) return;
+        
+        const receiptModal = document.getElementById('receiptModal');
+        const receiptContent = document.getElementById('receiptContent');
+        
+        // Format transaction date
+        const transactionDate = new Date(transaction.date);
+        const formattedDate = formatDate(transactionDate);
+        const formattedTime = formatTime(transactionDate);
+        
+        // Translate category
+        const categoryName = getCategoryName(transaction.category);
+        
+        // Translate type
+        const typeText = transaction.type === 'income' ? 'درآمد' : 'هزینه';
+        
+        const receipt = document.createElement('div');
+        receipt.id = 'receipt';
+        receipt.className = 'receipt';
+        receipt.innerHTML = `
+          <div class="receipt-header">
+            <div class="receipt-title">رسید تراکنش</div>
+            <div class="receipt-subtitle">${formattedDate} - ${formattedTime}</div>
+          </div>
+          <div class="receipt-body">
+            <div class="receipt-row">
+              <span class="receipt-label">عنوان:</span>
+              <span class="receipt-value">${transaction.title}</span>
+            </div>
+            <div class="receipt-row">
+              <span class="receipt-label">نوع:</span>
+              <span class="receipt-value">${typeText}</span>
+            </div>
+            <div class="receipt-row">
+              <span class="receipt-label">دسته‌بندی:</span>
+              <span class="receipt-value">${categoryName}</span>
+            </div>
+            <div class="receipt-row">
+              <span class="receipt-label">مبلغ:</span>
+              <span class="receipt-value receipt-highlight">${formatAmount(transaction.amount)}</span>
+            </div>
+            ${transaction.description ? `
+            <div class="receipt-row">
+              <span class="receipt-label">توضیحات:</span>
+              <span class="receipt-value">${transaction.description}</span>
+            </div>` : ''}
+          </div>
+          <div class="receipt-footer">
+            <div>شناسه تراکنش: ${transaction.id}</div>
+            <div>تاریخ ثبت: ${formattedDate} ${formattedTime}</div>
+            <div>تاریخ صدور رسید: ${formatDateTime(new Date())}</div>
+          </div>
+        `;
+        
+        receiptContent.innerHTML = '';
+        receiptContent.appendChild(receipt);
+        receiptModal.classList.remove('hidden');
+      };
+      
+      // Show contact transaction receipt
+      window.showContactTransactionReceipt = function(id) {
+        const transaction = contactTransactions.find(t => t.id === id);
+        if (!transaction) return;
+        
+        const contact = contacts.find(c => c.id === transaction.contactId);
+        if (!contact) return;
+        
+        const receiptModal = document.getElementById('receiptModal');
+        const receiptContent = document.getElementById('receiptContent');
+        
+        // Format transaction date
+        const transactionDate = new Date(transaction.date);
+        const formattedDate = formatDate(transactionDate);
+        
+        // Transaction type text
+        let typeText = '';
+        let typeClass = '';
+        
+        switch(transaction.type) {
+          case 'receivable':
+            typeText = 'پرداخت به طرف حساب';
+            typeClass = 'text-danger-500';
+            break;
+          case 'payable':
+            typeText = 'دریافت از طرف حساب';
+            typeClass = 'text-success-500';
+            break;
+          case 'deposit':
+            typeText = 'امانت دریافتی';
+            typeClass = 'text-warning-500';
+            break;
+          case 'loan':
+            typeText = 'قرض‌الحسنه دریافتی';
+            typeClass = 'text-warning-500';
+            break;
+          case 'deposit_return':
+            typeText = 'بازپرداخت امانت';
+            typeClass = 'text-info-500';
+            break;
+          case 'loan_return':
+            typeText = 'بازپرداخت قرض‌الحسنه';
+            typeClass = 'text-info-500';
+            break;
+        }
+        
+        const receipt = document.createElement('div');
+        receipt.id = 'receipt';
+        receipt.className = 'receipt';
+        receipt.innerHTML = `
+          <div class="receipt-header">
+            <div class="receipt-title">رسید تراکنش</div>
+            <div class="receipt-subtitle">طرف حساب: ${contact.name}</div>
+            <div class="receipt-subtitle">${formattedDate}</div>
+          </div>
+          <div class="receipt-body">
+            <div class="receipt-row">
+              <span class="receipt-label">عنوان:</span>
+              <span class="receipt-value">${transaction.title}</span>
+            </div>
+            <div class="receipt-row">
+              <span class="receipt-label">نوع:</span>
+              <span class="receipt-value ${typeClass}">${typeText}</span>
+            </div>
+            <div class="receipt-row">
+              <span class="receipt-label">مبلغ:</span>
+              <span class="receipt-value receipt-highlight">${formatAmount(transaction.amount)}</span>
+            </div>
+            ${transaction.description ? `
+            <div class="receipt-row">
+              <span class="receipt-label">توضیحات:</span>
+              <span class="receipt-value">${transaction.description}</span>
+            </div>` : ''}
+          </div>
+          <div class="receipt-footer">
+            <div>شناسه تراکنش: ${transaction.id}</div>
+            <div>تاریخ ثبت: ${formattedDate}</div>
+            <div>تاریخ صدور رسید: ${formatDateTime(new Date())}</div>
+          </div>
+        `;
+        
+        receiptContent.innerHTML = '';
+        receiptContent.appendChild(receipt);
+        receiptModal.classList.remove('hidden');
+      };
+      
+      // Radio button selection for transaction type
+      document.getElementById('type-income-label').addEventListener('click', function() {
+        this.classList.add('bg-success-100', 'dark:bg-success-900', 'text-success-700', 'dark:text-success-300');
+        document.getElementById('type-expense-label').classList.remove('bg-danger-100', 'dark:bg-danger-900', 'text-danger-700', 'dark:text-danger-300');
+        document.getElementById('type').value = 'income';
+      });
+      
+      document.getElementById('type-expense-label').addEventListener('click', function() {
+        this.classList.add('bg-danger-100', 'dark:bg-danger-900', 'text-danger-700', 'dark:text-danger-300');
+        document.getElementById('type-income-label').classList.remove('bg-success-100', 'dark:bg-success-900', 'text-success-700', 'dark:text-success-300');
+        document.getElementById('type').value = 'expense';
+      });
+      
+      // Form submissions
+      
+      // Transaction form
+      document.getElementById('transactionForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const editId = document.getElementById('editTransactionId').value;
+        const title = document.getElementById('title').value;
+        const amount = parseFloat(document.getElementById('amount').value);
+        const type = document.getElementById('type').value;
+        const category = document.getElementById('category').value;
+        const date = document.getElementById('date').value;
+        const time = document.getElementById('time').value;
+        const description = document.getElementById('description').value;
+        
+        // Create transaction date
+        const transactionDate = new Date(`${date}T${time}`);
+        
+        if (editId) {
+          // Edit existing transaction
+          const index = transactions.findIndex(t => t.id === parseInt(editId));
+          if (index !== -1) {
+            transactions[index] = {
+              ...transactions[index],
+              title,
+              amount,
+              type,
+              category,
+              date: transactionDate,
+              description
+            };
+            
+            showToast('تراکنش با موفقیت ویرایش شد', 'success');
+          }
+        } else {
+          // Add new transaction
+          const newTransaction = {
+            id: currentTransactionId++,
+            title,
+            amount,
+            type,
+            category,
+            date: transactionDate,
+            description
+          };
+          
+          transactions.push(newTransaction);
+          showToast('تراکنش با موفقیت ثبت شد', 'success');
+        }
+        
+        // Save to localStorage
+        saveToLocalStorage();
+        
+        // Update UI
+        updateRecentTransactions();
+        updateBalanceDisplay();
+        updateTransactionsList();
+        updateCategoryChart();
+        updateReminders();
+        
+        // Close modal
+        document.getElementById('addTransactionModal').classList.add('hidden');
+      });
+      
+      // Contact form
+      document.getElementById('contactForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const name = document.getElementById('contactName').value;
+        const phone = document.getElementById('contactPhone').value;
+        const description = document.getElementById('contactDescription').value;
+        
+        const newContact = {
+          id: currentContactId++,
+          name,
+          phone,
+          description
+        };
+        
+        contacts.push(newContact);
+        showToast('طرف حساب با موفقیت اضافه شد', 'success');
+        
+        // Save to localStorage
+        saveToLocalStorage();
+        
+        // Update UI
+        updateContactsList();
+        
+        // Close modal
+        document.getElementById('addContactModal').classList.add('hidden');
+      });
+      
+      // Contact transaction form
+      document.getElementById('contactTransactionForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const editId = document.getElementById('editContactTransactionId').value;
+        const contactId = parseInt(document.getElementById('contactId').value);
+        const title = document.getElementById('transactionTitle').value;
+        const amount = parseFloat(document.getElementById('transactionAmount').value);
+        const type = document.getElementById('transactionType').value;
+        const date = document.getElementById('transactionDate').value;
+        const description = document.getElementById('transactionDescription').value;
+        
+        // Create transaction date
+        const transactionDate = new Date(date);
+        
+        if (editId) {
+          // Edit existing transaction
+          const index = contactTransactions.findIndex(t => t.id === parseInt(editId));
+          if (index !== -1) {
+            contactTransactions[index] = {
+              ...contactTransactions[index],
+              title,
+              amount,
+              type,
+              date: transactionDate,
+              description
+            };
+            
+            showToast('تراکنش با موفقیت ویرایش شد', 'success');
+          }
+        } else {
+          // Add new transaction
+          const newTransaction = {
+            id: currentContactTransactionId++,
+            contactId,
+            title,
+            amount,
+            type,
+            date: transactionDate,
+            description
+          };
+          
+          contactTransactions.push(newTransaction);
+          showToast('تراکنش با موفقیت ثبت شد', 'success');
+        }
+        
+        // Save to localStorage
+        saveToLocalStorage();
+        
+        // Update UI
+        updateBalanceDisplay();
+        updateContactsList();
+        updateReminders();
+        
+        // If we're viewing this contact's details, update those too
+        if (currentViewingContactId === contactId) {
+          viewContactDetails(contactId);
+        }
+        
+        // Close modal
+        document.getElementById('addContactTransactionModal').classList.add('hidden');
+      });
+      
+      // Profile form
+      document.getElementById('profileForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const name = document.getElementById('profileFullName').value;
+        const email = document.getElementById('profileEmail').value;
+        const phone = document.getElementById('profilePhone').value;
+        const role = document.getElementById('profileRoleSelect').value;
+        
+        userProfile.name = name;
+        userProfile.email = email;
+        userProfile.phone = phone;
+        userProfile.role = role;
+        
+        // Save to localStorage
+        saveToLocalStorage();
+        
+        // Update UI
+        updateProfileUI();
+        
+        // Close modal
+        document.getElementById('editProfileModal').classList.add('hidden');
+        
+        showToast('پروفایل با موفقیت بروزرسانی شد', 'success');
+      });
+      
+      // Profile image upload
+      document.getElementById('profileImage').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        
+        const reader = new FileReader();
+        reader.onload = function(event) {
+          const profileImagePreview = document.getElementById('profileImagePreview');
+          const profileInitialLarge = document.getElementById('profileInitialLarge');
+          
+          userProfile.avatar = event.target.result;
+          
+          profileImagePreview.style.backgroundImage = `url(${event.target.result})`;
+          profileImagePreview.style.backgroundSize = 'cover';
+          profileImagePreview.style.backgroundPosition = 'center';
+          
+          profileInitialLarge.style.display = 'none';
+        };
+        
+        reader.readAsDataURL(file);
+      });
+      
+      // Close modals
+      document.getElementById('closeAddTransactionModal').addEventListener('click', function() {
+        document.getElementById('addTransactionModal').classList.add('hidden');
+      });
+      
+      document.getElementById('closeAddContactModal').addEventListener('click', function() {
+        document.getElementById('addContactModal').classList.add('hidden');
+      });
+      
+      document.getElementById('closeAddContactTransactionModal').addEventListener('click', function() {
+        document.getElementById('addContactTransactionModal').classList.add('hidden');
+      });
+      
+      document.getElementById('closeReceiptModal').addEventListener('click', function() {
+        document.getElementById('receiptModal').classList.add('hidden');
+      });
+      
+      document.getElementById('closeHistoryReceiptModal').addEventListener('click', function() {
+        document.getElementById('historyReceiptModal').classList.add('hidden');
+      });
+      
+      document.getElementById('closeSortModal').addEventListener('click', function() {
+        document.getElementById('sortOptionsModal').classList.add('hidden');
+      });
+      
+      document.getElementById('closeEditProfileModal').addEventListener('click', function() {
+        document.getElementById('editProfileModal').classList.add('hidden');
+      });
+      
+      // Delete confirmation
+      document.getElementById('confirmDelete').addEventListener('click', function() {
+        if (deleteTransactionId) {
+          // Delete transaction
+          const index = transactions.findIndex(t => t.id === deleteTransactionId);
+          if (index !== -1) {
+            transactions.splice(index, 1);
+            showToast('تراکنش با موفقیت حذف شد', 'success');
+            
+            // Update UI
+            updateRecentTransactions();
+            updateBalanceDisplay();
+            updateTransactionsList();
+            updateCategoryChart();
+          }
+        } else if (deleteContactTransactionId) {
+          // Delete contact transaction
+          const index = contactTransactions.findIndex(t => t.id === deleteContactTransactionId);
+          if (index !== -1) {
+            const contactId = contactTransactions[index].contactId;
+            contactTransactions.splice(index, 1);
+            showToast('تراکنش با موفقیت حذف شد', 'success');
+            
+            // Update UI
+            updateBalanceDisplay();
+            updateContactsList();
+            
+            // If we're viewing this contact's details, update those too
+            if (currentViewingContactId === contactId) {
+              viewContactDetails(contactId);
+            }
+          }
+        }
+        
+        // Save to localStorage
+        saveToLocalStorage();
+        
+        // Close modal
+        document.getElementById('deleteModal').classList.add('hidden');
+      });
+      
+      // Cancel delete
+      document.getElementById('cancelDelete').addEventListener('click', function() {
+        document.getElementById('deleteModal').classList.add('hidden');
+        deleteTransactionId = null;
+        deleteContactTransactionId = null;
+      });
+      
+      // Sort transactions
+      document.getElementById('sortTransactions').addEventListener('click', function() {
+        document.getElementById('sortOptionsModal').classList.remove('hidden');
+      });
+      
+      // Sort options
+      document.querySelectorAll('.sort-option').forEach(option => {
+        option.addEventListener('click', function() {
+          const field = this.getAttribute('data-sort');
+          const order = this.getAttribute('data-order');
+          
+          currentSort.field = field;
+          currentSort.order = order;
+          
+          // Update transactions list
+          updateTransactionsList();
+          
+          // Close modal
+          document.getElementById('sortOptionsModal').classList.add('hidden');
+        });
+      });
+      
+      // Filter buttons
+      document.getElementById('applyFilters').addEventListener('click', function() {
+        updateTransactionsList(true);
+        document.getElementById('filterPanel').classList.add('hidden');
+      });
+      
+      document.getElementById('resetFilters').addEventListener('click', function() {
+        document.getElementById('filterText').value = '';
+        document.getElementById('filterCategory').value = 'all';
+        document.getElementById('filterType').value = 'all';
+        document.getElementById('filterStartDate').value = '';
+        document.getElementById('filterEndDate').value = '';
+        
+        updateTransactionsList();
+        document.getElementById('filterPanel').classList.add('hidden');
+      });
+      
+      document.getElementById('applyContactFilters').addEventListener('click', function() {
+        updateContactsList(true);
+        document.getElementById('contactsFilterPanel').classList.add('hidden');
+      });
+      
+      document.getElementById('resetContactFilters').addEventListener('click', function() {
+        document.getElementById('searchContact').value = '';
+        document.getElementById('filterContactBalance').value = 'all';
+        
+        updateContactsList();
+        document.getElementById('contactsFilterPanel').classList.add('hidden');
+      });
+      
+      // Search filter
+      document.getElementById('filterText').addEventListener('input', function() {
+        if (this.value.length >= 2 || this.value.length === 0) {
+          updateTransactionsList(true);
+        }
+      });
+      
+      document.getElementById('searchContact').addEventListener('input', function() {
+        if (this.value.length >= 2 || this.value.length === 0) {
+          updateContactsList(true);
+        }
+      });
+      
+      // Dark mode toggle
+      document.getElementById('darkModeToggle').addEventListener('click', function() {
+        document.documentElement.classList.toggle('dark');
+        
+        // Save to localStorage
+        saveToLocalStorage();
+        
+        // Update chart colors if they exist
+        if (window.categoryChart) {
+          window.categoryChart.options.plugins.legend.labels.color = document.documentElement.classList.contains('dark') ? '#E5E7EB' : '#111827';
+          window.categoryChart.options.plugins.tooltip.backgroundColor = document.documentElement.classList.contains('dark') ? '#374151' : 'white';
+          window.categoryChart.options.plugins.tooltip.titleColor = document.documentElement.classList.contains('dark') ? '#E5E7EB' : '#111827';
+          window.categoryChart.options.plugins.tooltip.bodyColor = document.documentElement.classList.contains('dark') ? '#E5E7EB' : '#111827';
+          window.categoryChart.update();
+        }
+        
+        if (contactTransactionChart) {
+          contactTransactionChart.options.plugins.legend.labels.color = document.documentElement.classList.contains('dark') ? '#E5E7EB' : '#111827';
+          contactTransactionChart.options.scales.x.ticks.color = document.documentElement.classList.contains('dark') ? '#E5E7EB' : '#111827';
+          contactTransactionChart.options.scales.y.ticks.color = document.documentElement.classList.contains('dark') ? '#E5E7EB' : '#111827';
+          contactTransactionChart.update();
+        }
+      });
+      
+      // Font size buttons
+      document.getElementById('decreaseFontBtn').addEventListener('click', function() {
+        if (currentFontSize === 'medium') {
+          currentFontSize = 'small';
+        } else if (currentFontSize === 'large') {
+          currentFontSize = 'medium';
+        }
+        
+        applyFontSize(currentFontSize);
+        saveToLocalStorage();
+      });
+      
+      document.getElementById('increaseFontBtn').addEventListener('click', function() {
+        if (currentFontSize === 'small') {
+          currentFontSize = 'medium';
+        } else if (currentFontSize === 'medium') {
+          currentFontSize = 'large';
+        }
+        
+        applyFontSize(currentFontSize);
+        saveToLocalStorage();
+      });
+      
+      // Edit profile button
+      document.getElementById('editProfileBtn').addEventListener('click', function() {
+        // Fill profile form with current data
+        document.getElementById('profileFullName').value = userProfile.name;
+        document.getElementById('profileEmail').value = userProfile.email || '';
+        document.getElementById('profilePhone').value = userProfile.phone || '';
+        document.getElementById('profileRoleSelect').value = userProfile.role;
+        
+        // Set avatar preview
+        const profileImagePreview = document.getElementById('profileImagePreview');
+        const profileInitialLarge = document.getElementById('profileInitialLarge');
+        
+        if (userProfile.avatar) {
+          profileImagePreview.style.backgroundImage = `url(${userProfile.avatar})`;
+          profileImagePreview.style.backgroundSize = 'cover';
+          profileImagePreview.style.backgroundPosition = 'center';
+          profileInitialLarge.style.display = 'none';
+        } else {
+          profileImagePreview.style.backgroundImage = '';
+          profileInitialLarge.style.display = 'block';
+          profileInitialLarge.textContent = userProfile.name.charAt(0);
+        }
+        
+        // Show modal
+        document.getElementById('editProfileModal').classList.remove('hidden');
+      });
+      
+      // Data export/import
+      document.getElementById('exportData').addEventListener('click', function() {
+        const exportData = {
+          transactions,
+          contacts,
+          contactTransactions,
+          userProfile,
+          settings: {
+            darkMode: document.documentElement.classList.contains('dark'),
+            fontSize: currentFontSize
+          }
+        };
+        
+        const dataStr = JSON.stringify(exportData, null, 2);
+        const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+        
+        const exportFileName = `finance_data_backup_${new Date().toISOString().split('T')[0]}.json`;
+        
+        const linkElement = document.createElement('a');
+        linkElement.setAttribute('href', dataUri);
+        linkElement.setAttribute('download', exportFileName);
+        linkElement.click();
+        
+        showToast('داده‌ها با موفقیت صادر شدند', 'success');
+      });
+      
+      document.getElementById('importData').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        
+        const reader = new FileReader();
+        reader.onload = function(event) {
+          try {
+            const importedData = JSON.parse(event.target.result);
+            
+            // Validate imported data structure
+            if (!importedData.transactions || !importedData.contacts || !importedData.contactTransactions) {
+              throw new Error('ساختار فایل نامعتبر است');
+            }
+            
+            // Import data
+            transactions = importedData.transactions;
+            contacts = importedData.contacts;
+            contactTransactions = importedData.contactTransactions;
+            
+            // Convert string dates back to Date objects
+            transactions.forEach(transaction => {
+              transaction.date = new Date(transaction.date);
+            });
+            
+            contactTransactions.forEach(transaction => {
+              transaction.date = new Date(transaction.date);
+            });
+            
+            // Set IDs for next items
+            currentTransactionId = Math.max(...transactions.map(t => t.id || 0), 0) + 1;
+            currentContactId = Math.max(...contacts.map(c => c.id || 0), 0) + 1;
+            currentContactTransactionId = Math.max(...contactTransactions.map(t => t.id || 0), 0) + 1;
+            
+            // Import user profile if available
+            if (importedData.userProfile) {
+              userProfile = importedData.userProfile;
+            }
+            
+            // Import settings if available
+            if (importedData.settings) {
+              if (importedData.settings.darkMode !== undefined) {
+                if (importedData.settings.darkMode) {
+                  document.documentElement.classList.add('dark');
+                } else {
+                  document.documentElement.classList.remove('dark');
+                }
+              }
+              
+              if (importedData.settings.fontSize) {
+                currentFontSize = importedData.settings.fontSize;
+                applyFontSize(currentFontSize);
+              }
+            }
+            
+            // Save to localStorage
+            saveToLocalStorage();
+            
+            // Update UI
+            updateProfileUI();
+            updateWeeklyCalendar();
+            updateRecentTransactions();
+            updateBalanceDisplay();
+            updateTransactionsList();
+            updateContactsList();
+            updateCategoryChart();
+            updateReminders();
+            
+            showToast('داده‌ها با موفقیت وارد شدند', 'success');
+          } catch (error) {
+            console.error('Error importing data:', error);
+            showToast('خطا در وارد کردن داده‌ها: ' + error.message, 'error');
+          }
+        };
+        
+        reader.readAsText(file);
+      });
+      
+      // Function to show toast notifications
+      function showToast(message, type = 'success') {
+        const toast = document.getElementById('toast');
+        const messageElement = toast.querySelector('.toast-message');
+        messageElement.textContent = message;
+        
+        // Set toast color based on type
+        toast.className = 'toast flex items-center';
+        
+        // Update icon based on type
+        const icon = toast.querySelector('i');
+        
+        switch (type) {
+          case 'success':
+            toast.classList.add('toast-success');
+            icon.className = 'ri-check-line mr-2 text-xl';
+            break;
+          case 'error':
+            toast.classList.add('toast-error');
+            icon.className = 'ri-error-warning-line mr-2 text-xl';
+            break;
+          case 'info':
+            toast.classList.add('toast-info');
+            icon.className = 'ri-information-line mr-2 text-xl';
+            break;
+          case 'warning':
+            toast.classList.add('toast-warning');
+            icon.className = 'ri-alert-line mr-2 text-xl';
+            break;
+        }
+        
+        toast.classList.add('show');
+        toast.style.transform = 'translateX(-50%) translateY(0)';
+        
+        // Auto-hide the toast after 3 seconds
+        setTimeout(() => {
+          toast.classList.remove('show');
+          toast.style.transform = 'translateX(-50%) translateY(-20px)';
+        }, 3000);
+      }
+      
+      // Initialize the application
+      function initializeApp() {
+        // Load data from localStorage
+        loadFromLocalStorage();
+        
+        // Update UI
+        updateProfileUI();
+        updateWeeklyCalendar();
+        updateRecentTransactions();
+        updateBalanceDisplay();
+        updateTransactionsList();
+        updateContactsList();
+        updateCategoryChart();
+        updateReminders();
+        
+        // Apply font size
+        applyFontSize(currentFontSize);
+        
+        // Update dark mode toggle UI
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        if (darkModeToggle) {
+          const toggle = darkModeToggle.querySelector('div');
+          if (document.documentElement.classList.contains('dark')) {
+            toggle.classList.add('translate-x-6');
+            toggle.classList.remove('translate-x-0');
+          } else {
+            toggle.classList.remove('translate-x-6');
+            toggle.classList.add('translate-x-0');
+          }
+        }
+      }
+      
+      // Reset font sizes
+      document.querySelectorAll('input, select, textarea').forEach(element => {
+        element.style.fontSize = '16px';
+      });
+      
+      // Initialize service worker if available
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('service-worker.js')
+            .then(registration => {
+              console.log('Service Worker ثبت شد:', registration.scope);
+            })
+            .catch(error => {
+              console.error('خطا در ثبت Service Worker:', error);
+            });
+        });
+      }
+      
+      // Initialize app
+      initializeApp();
+    });
+  </script> 
+ 
+<script type="text/javascript" id="dcoder_script">// کلاس خودرو
+class Car {
+    constructor(type, licensePlate, driverName, phoneNumber) {
+        this.type = type;
+        this.licensePlate = licensePlate;
+        this.driverName = driverName;
+        this.phoneNumber = phoneNumber;
+        this.entryTime = new Date();
+        this.spotNumber = null;
+    }
+}
+
+// کلاس پارکینگ
+class ParkingLot {
+    constructor(totalSpots) {
+        this.totalSpots = totalSpots;
+        this.spots = new Array(totalSpots).fill(null);
+        this.hourlyRate = 5000; // نرخ هر ساعت پارکینگ
+        this.initializeRandomCars();
+    }
+
+    initializeRandomCars() {
+        const carTypes = ['pride', 'peugeot_206', 'samand', 'dena', 'haima'];
+        const names = ['علی محمدی', 'رضا احمدی', 'محمد حسینی', 'سارا کریمی'];
+        
+        for(let i = 0; i < 8; i++) {
+            const randomType = carTypes[Math.floor(Math.random() * carTypes.length)];
+            const randomName = names[Math.floor(Math.random() * names.length)];
+            const randomPlate = this.generateRandomPlate();
+            const phoneNumber = '0912' + Math.floor(Math.random() * 9999999).toString();
+            
+            const car = new Car(randomType, randomPlate, randomName, phoneNumber);
+            this.parkCar(car);
+        }
+    }
+
+    generateRandomPlate() {
+        const letters = ['الف', 'ب', 'پ', 'ت', 'ج', 'د'];
+        return {
+            iran: Math.floor(Math.random() * 99),
+            number: Math.floor(Math.random() * 999),
+            letter: letters[Math.floor(Math.random() * letters.length)],
+            region: Math.floor(Math.random() * 99)
+        };
+    }
+
+    getCarSize(carType) {
+        const largeCars = ['haima', 'tucson', 'santafe', 'nissan'];
+        const mediumCars = ['samand', 'dena', 'peugeot_405'];
+        
+        if (largeCars.includes(carType)) return 'large';
+        if (mediumCars.includes(carType)) return 'medium';
+        return 'small';
+    }
+
+    findAvailableSpot(carType) {
+        const size = this.getCarSize(carType);
+        let startSpot, endSpot;
+
+        switch(size) {
+            case 'small':
+                startSpot = 0;
+                endSpot = 6;
+                break;
+            case 'medium':
+                startSpot = 7;
+                endSpot = 13;
+                break;
+            case 'large':
+                startSpot = 14;
+                endSpot = 19;
+                break;
+        }
+
+        for(let i = startSpot; i <= endSpot; i++) {
+            if(this.spots[i] === null) return i;
+        }
+        return -1;
+    }
+
+    parkCar(car) {
+        const spotNumber = this.findAvailableSpot(car.type);
+        if(spotNumber !== -1) {
+            car.spotNumber = spotNumber;
+            this.spots[spotNumber] = car;
+            return true;
+        }
+        return false;
+    }
+
+    removeCar(spotNumber) {
+        const car = this.spots[spotNumber];
+        if(car) {
+            const duration = this.calculateDuration(car.entryTime);
+            const fee = this.calculateFee(duration);
+            this.spots[spotNumber] = null;
+            return { duration, fee };
+        }
+        return null;
+    }
+
+    calculateDuration(entryTime) {
+        const now = new Date();
+        const diff = now - entryTime;
+        return Math.ceil(diff / (1000 * 60 * 60)); // تبدیل به ساعت
+    }
+
+    calculateFee(hours) {
+        return hours * this.hourlyRate;
+    }
+
+    getOccupiedSpots() {
+        return this.spots.filter(spot => spot !== null).length;
+    }
+
+    getAvailableSpots() {
+        return this.totalSpots - this.getOccupiedSpots();
+    }
+}
+
+// ایجاد نمونه پارکینگ
+const parkingLot = new ParkingLot(20);
+
+// بروزرسانی نمایش پارکینگ
+function updateParkingLayout() {
+    const parkingLayout = document.getElementById('parkingLayout');
+    parkingLayout.innerHTML = '';
+
+    parkingLot.spots.forEach((spot, index) => {
+        const spotElement = document.createElement('div');
+        spotElement.className = `parking-spot ${spot ? 'occupied' : 'available'}`;
+        
+        if(spot) {
+            spotElement.innerHTML = `
+                <div class="car-info">
+                    <div>جایگاه ${index + 1}</div>
+                    <div>${formatLicensePlate(spot.licensePlate)}</div>
+                    <div>${spot.type.replace('_', ' ')}</div>
+                </div>
+            `;
+        } else {
+            spotElement.innerHTML = `<div>جایگاه ${index + 1}</div>`;
+        }
+
+        parkingLayout.appendChild(spotElement);
+    });
+
+    updateStats();
+    updateExitSpotsList();
+}
+
+// بروزرسانی آمار
+function updateStats() {
+    document.getElementById('totalSpots').textContent = parkingLot.totalSpots;
+    document.getElementById('availableSpots').textContent = parkingLot.getAvailableSpots();
+    document.getElementById('occupiedSpots').textContent = parkingLot.getOccupiedSpots();
+}
+
+// بروزرسانی لیست جایگاه‌های پر برای فرم خروج
+function updateExitSpotsList() {
+    const select = document.getElementById('exitSpotNumber');
+    select.innerHTML = '<option value="">انتخاب کنید</option>';
+    
+    parkingLot.spots.forEach((spot, index) => {
+        if(spot) {
+            const option = document.createElement('option');
+            option.value = index;
+            option.textContent = `جایگاه ${index + 1} - ${formatLicensePlate(spot.licensePlate)}`;
+            select.appendChild(option);
+        }
+    });
+}
+
+// فرمت کردن شماره پلاک
+function formatLicensePlate(plate) {
+    return `${plate.iran} ایران ${plate.number} ${plate.letter} ${plate.region}`;
+}
+
+// مدیریت فرم ورود
+document.getElementById('carEntryForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const licensePlate = {
+        iran: document.getElementById('plate-iran').value,
+        number: document.getElementById('plate-number').value,
+        letter: document.getElementById('plate-letter').value,
+        region: document.getElementById('plate-region').value
+    };
+
+    const car = new Car(
+        document.getElementById('carType').value,
+        licensePlate,
+        document.getElementById('driverName').value,
+        document.getElementById('phoneNumber').value
+    );
+
+    if(parkingLot.parkCar(car)) {
+        alert('خودرو با موفقیت پارک شد');
+        this.reset();
+        updateParkingLayout();
+    } else {
+        alert('متأسفانه جایگاه خالی موجود نیست');
+    }
+});
+
+// مدیریت فرم خروج
+document.getElementById('carExitForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const spotNumber = document.getElementById('exitSpotNumber').value;
+    if(spotNumber === '') {
+        alert('لطفاً یک جایگاه را انتخاب کنید');
+        return;
+    }
+
+    const result = parkingLot.removeCar(parseInt(spotNumber));
+    if(result) {
+        alert(`خودرو با موفقیت خارج شد\nمدت توقف: ${result.duration} ساعت\nهزینه: ${result.fee} تومان`);
+        this.reset();
+        document.getElementById('exitFee').value = '';
+        document.getElementById('parkingDuration').value = '';
+        updateParkingLayout();
+    }
+});
+
+// نمایش اطلاعات هزینه و مدت توقف هنگام انتخاب جایگاه
+document.getElementById('exitSpotNumber').addEventListener('change', function() {
+    const spotNumber = this.value;
+    if(spotNumber === '') {
+        document.getElementById('exitFee').value = '';
+        document.getElementById('parkingDuration').value = '';
+        return;
+    }
+
+    const car = parkingLot.spots[spotNumber];
+    const duration = parkingLot.calculateDuration(car.entryTime);
+    const fee = parkingLot.calculateFee(duration);
+
+    document.getElementById('exitFee').value = fee.toLocaleString() + ' تومان';
+    document.getElementById('parkingDuration').value = duration + ' ساعت';
+});
+
+// اعتبارسنجی ورودی‌های عددی پلاک
+document.querySelectorAll('#plate-iran, #plate-number, #plate-region').forEach(input => {
+    input.addEventListener('input', function() {
+        this.value = this.value.replace(/[^0-9]/g, '');
+    });
+});
+
+// نمایش اولیه
+updateParkingLayout();</script></body></html>
+    
